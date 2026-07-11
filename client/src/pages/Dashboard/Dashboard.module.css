@@ -1,0 +1,141 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-space-6);
+  padding-block: var(--sc-space-5) var(--sc-space-7);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-space-4);
+}
+
+.title {
+  font-size: var(--sc-fs-2xl);
+  margin-bottom: var(--sc-space-1);
+}
+
+.subtitle {
+  color: var(--sc-text-muted);
+  margin: 0;
+}
+
+.statsRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sc-space-4);
+}
+
+.trendCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-space-3);
+}
+
+.sectionTitle {
+  font-size: var(--sc-fs-lg);
+  margin-bottom: var(--sc-space-3);
+}
+
+.emptyCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sc-space-4);
+}
+
+.emptyText {
+  color: var(--sc-text-muted);
+  margin: 0;
+}
+
+.sessionList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-space-3);
+}
+
+.sessionCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-space-3);
+}
+
+.sessionInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-space-1);
+}
+
+.sessionBusiness {
+  font-weight: var(--sc-fw-semibold);
+  color: var(--sc-text);
+}
+
+.sessionMeta {
+  font-size: var(--sc-fs-sm);
+  color: var(--sc-text-muted);
+}
+
+.sessionAction {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-space-3);
+  flex-wrap: wrap;
+}
+
+.badge {
+  font-size: var(--sc-fs-xs);
+  font-weight: var(--sc-fw-semibold);
+  padding: var(--sc-space-1) var(--sc-space-2);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-surface-2);
+  color: var(--sc-text-muted);
+}
+
+.badge_active {
+  background: var(--sc-primary-soft);
+  color: var(--sc-primary);
+}
+
+.badge_completed {
+  background: var(--sc-success-soft);
+  color: var(--sc-success);
+}
+
+.badge_abandoned {
+  background: var(--sc-danger-soft);
+  color: var(--sc-danger);
+}
+
+.score {
+  font-weight: var(--sc-fw-semibold);
+  color: var(--sc-text);
+}
+
+.sessionLink {
+  margin-left: auto;
+  font-weight: var(--sc-fw-semibold);
+}
+
+@media (min-width: 640px) {
+  .header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .statsRow {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .sessionCard {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

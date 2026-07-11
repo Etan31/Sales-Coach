@@ -1,0 +1,25 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-space-1);
+  padding: var(--sc-space-4);
+  background: var(--sc-surface);
+  border: 1px solid var(--sc-border);
+  border-radius: var(--sc-radius);
+}
+
+.label {
+  font-size: var(--sc-fs-sm);
+  color: var(--sc-text-muted);
+}
+
+.value {
+  font-size: var(--sc-fs-2xl);
+  font-weight: var(--sc-fw-bold);
+  color: var(--sc-text);
+}
+
+.hint {
+  font-size: var(--sc-fs-xs);
+  color: var(--sc-text-faint);
+}

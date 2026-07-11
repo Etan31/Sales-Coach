@@ -1,0 +1,40 @@
+.page {
+  max-width: 560px;
+  margin: 0 auto;
+  padding-block: var(--sc-space-5) var(--sc-space-7);
+}
+
+.title {
+  font-size: var(--sc-fs-2xl);
+  margin-bottom: var(--sc-space-1);
+}
+
+.subtitle {
+  color: var(--sc-text-muted);
+  margin-bottom: var(--sc-space-5);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-space-4);
+}
+
+.error {
+  background: var(--sc-danger-soft);
+  color: var(--sc-danger);
+  padding: var(--sc-space-3);
+  border-radius: var(--sc-radius);
+  font-size: var(--sc-fs-sm);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-space-4);
+}
+
+.submit {
+  width: 100%;
+  margin-top: var(--sc-space-2);
+}

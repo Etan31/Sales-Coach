@@ -1,0 +1,6 @@
+.timer {
+  font-variant-numeric: tabular-nums;
+  font-family: var(--sc-font-mono);
+  font-size: var(--sc-fs-md);
+  color: var(--sc-text);
+}

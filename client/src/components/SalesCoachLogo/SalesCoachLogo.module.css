@@ -1,0 +1,14 @@
+.logo {
+  flex-shrink: 0;
+}
+
+.badge {
+  fill: var(--sc-logo-bg);
+}
+
+.letter {
+  fill: var(--sc-logo-letter);
+  font-family: var(--sc-font-sans);
+  font-weight: var(--sc-fw-bold);
+  font-size: 16px;
+}

@@ -1,0 +1,119 @@
+/* Design tokens. Single source of truth for colors, spacing, type, radius, shadow.
+   All components consume var(--sc-*) tokens; do not hardcode raw values. */
+
+:root {
+  color-scheme: light;
+
+  /* Type - system stack, no external webfont (self-contained, no FOUT) */
+  --sc-font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --sc-font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+  --sc-fs-xs: 0.75rem;
+  --sc-fs-sm: 0.875rem;
+  --sc-fs-md: 1rem;
+  --sc-fs-lg: 1.125rem;
+  --sc-fs-xl: 1.5rem;
+  --sc-fs-2xl: 2rem;
+  --sc-fs-3xl: 2.75rem;
+
+  --sc-fw-normal: 400;
+  --sc-fw-medium: 500;
+  --sc-fw-semibold: 600;
+  --sc-fw-bold: 700;
+
+  /* Surfaces + text */
+  --sc-bg: #f5f7fb;
+  --sc-surface: #ffffff;
+  --sc-surface-2: #eef1f8;
+  --sc-border: #e1e6f0;
+  --sc-text: #161b2e;
+  --sc-text-muted: #5a6379;
+  --sc-text-faint: #8b93a7;
+
+  /* Brand */
+  --sc-primary: #4f46e5;
+  --sc-primary-hover: #4338ca;
+  --sc-primary-soft: #eef0fe;
+  --sc-primary-contrast: #ffffff;
+  --sc-accent: #06b6d4;
+  --sc-accent-soft: #e0f7fb;
+
+  /* Status */
+  --sc-success: #16a34a;
+  --sc-success-soft: #e7f6ec;
+  --sc-warning: #d97706;
+  --sc-warning-soft: #fdf1de;
+  --sc-danger: #dc2626;
+  --sc-danger-soft: #fbe9e9;
+  --sc-info: #2563eb;
+
+  /* Chat bubbles */
+  --sc-bubble-owner-bg: #eef1f8;
+  --sc-bubble-owner-text: #161b2e;
+  --sc-bubble-seller-bg: #4f46e5;
+  --sc-bubble-seller-text: #ffffff;
+
+  /* Logo / favicon monogram (near-black with hue cast + bright accent letter) */
+  --sc-logo-bg: #0b1020;
+  --sc-logo-letter: #22d3ee;
+
+  /* Radius */
+  --sc-radius-sm: 6px;
+  --sc-radius: 10px;
+  --sc-radius-lg: 16px;
+  --sc-radius-full: 999px;
+
+  /* Spacing scale */
+  --sc-space-1: 4px;
+  --sc-space-2: 8px;
+  --sc-space-3: 12px;
+  --sc-space-4: 16px;
+  --sc-space-5: 24px;
+  --sc-space-6: 32px;
+  --sc-space-7: 48px;
+  --sc-space-8: 64px;
+
+  /* Shadows */
+  --sc-shadow-sm: 0 1px 2px rgba(16, 24, 48, 0.06);
+  --sc-shadow: 0 4px 16px rgba(16, 24, 48, 0.08);
+  --sc-shadow-lg: 0 12px 32px rgba(16, 24, 48, 0.14);
+
+  /* Layout */
+  --sc-container: 1120px;
+  --sc-sidebar-w: 300px;
+  --sc-header-h: 60px;
+
+  --sc-transition: 160ms ease;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--sc-font-sans);
+  font-size: var(--sc-fs-md);
+  line-height: 1.5;
+  color: var(--sc-text);
+  background: var(--sc-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--sc-primary);
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+}
+
+#root {
+  min-height: 100vh;
+}

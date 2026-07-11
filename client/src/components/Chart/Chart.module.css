@@ -1,0 +1,28 @@
+.chart {
+  width: 100%;
+  height: auto;
+}
+
+.axis {
+  stroke: var(--sc-border);
+  stroke-width: 1;
+}
+
+.line {
+  fill: none;
+  stroke: var(--sc-primary);
+  stroke-width: 2;
+}
+
+.dot {
+  fill: var(--sc-primary);
+}
+
+.bar {
+  fill: var(--sc-accent);
+}
+
+.empty {
+  color: var(--sc-text-faint);
+  font-size: var(--sc-fs-sm);
+}

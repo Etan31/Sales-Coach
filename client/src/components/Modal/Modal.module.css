@@ -1,0 +1,36 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(16, 24, 48, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sc-space-4);
+  z-index: 1000;
+}
+
+.dialog {
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--sc-surface);
+  border-radius: var(--sc-radius-lg);
+  box-shadow: var(--sc-shadow-lg);
+  padding: var(--sc-space-5);
+}
+
+.dialog:focus {
+  outline: none;
+}
+
+.title {
+  margin: 0 0 var(--sc-space-4);
+  font-size: var(--sc-fs-lg);
+  font-weight: var(--sc-fw-semibold);
+  color: var(--sc-text);
+}
+
+.content {
+  color: var(--sc-text);
+}
