@@ -8,7 +8,17 @@ import errorHandler, { notFoundHandler } from './middleware/errorHandler.js';
 const app = express();
 
 app.use(express.json({ limit: '1mb' }));
-app.use(pinoHttp({ logger }));
+app.use(
+  pinoHttp({
+    logger,
+    // Trim the default per-request log line down to essentials (method/url/status/timing)
+    // instead of dumping full request/response headers on every request.
+    serializers: {
+      req: (req) => ({ method: req.method, url: req.url }),
+      res: (res) => ({ statusCode: res.statusCode })
+    }
+  })
+);
 
 applySecurity(app);
 
