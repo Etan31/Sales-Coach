@@ -28,7 +28,7 @@ export default [
 
   // Server + serverless entry (Node, ES Modules)
   {
-    files: ['server/**/*.js', 'api/**/*.js'],
+    files: ['server/**/*.{js,mjs}', 'api/**/*.{js,mjs}'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
