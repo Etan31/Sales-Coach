@@ -8,7 +8,14 @@ import Card from '../../components/Card/Card.jsx';
 import StatCard from '../../components/StatCard/StatCard.jsx';
 import Chart from '../../components/Chart/Chart.jsx';
 import Spinner from '../../components/Spinner/Spinner.jsx';
+import Modal from '../../components/Modal/Modal.jsx';
+import TranscriptModal from '../../components/TranscriptModal/TranscriptModal.jsx';
+import { downloadTextFile } from '../../utils/transcript.js';
+import { getTranscripts, clearTranscripts } from '../../services/localTranscripts.js';
 import styles from './Dashboard.module.css';
+
+const TRANSCRIPT_DIVIDER = `\n\n${'='.repeat(40)}\n\n`;
+const RECENT_TRANSCRIPT_LIMIT = 5;
 
 // Static enum -> label maps (docs/contracts.md); Dashboard does not fetch /config.
 const BUSINESS_LABELS = {
@@ -80,6 +87,41 @@ function Dashboard() {
     const trend = stats?.scoreTrend ?? [];
     return trend.map((point) => ({ label: formatDate(point.date), value: point.overallScore }));
   }, [stats]);
+
+  const [transcripts, setTranscripts] = useState([]);
+  const [confirmClearOpen, setConfirmClearOpen] = useState(false);
+  const [viewingTranscript, setViewingTranscript] = useState(null);
+  const [copyAllStatus, setCopyAllStatus] = useState('idle');
+
+  useEffect(() => {
+    setTranscripts(getTranscripts());
+  }, []);
+
+  const recentTranscripts = useMemo(() => transcripts.slice(0, RECENT_TRANSCRIPT_LIMIT), [transcripts]);
+
+  function handleDownloadAllTranscripts() {
+    const text = transcripts.map((entry) => entry.text).join(TRANSCRIPT_DIVIDER);
+    downloadTextFile('sales-coach-transcripts.txt', text);
+  }
+
+  async function handleCopyAllTranscripts() {
+    const text = transcripts.map((entry) => entry.text).join(TRANSCRIPT_DIVIDER);
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error('Clipboard API unavailable');
+      await navigator.clipboard.writeText(text);
+      setCopyAllStatus('copied');
+    } catch {
+      setCopyAllStatus('idle');
+      return;
+    }
+    window.setTimeout(() => setCopyAllStatus('idle'), 2000);
+  }
+
+  function handleClearTranscripts() {
+    clearTranscripts();
+    setTranscripts([]);
+    setConfirmClearOpen(false);
+  }
 
   if (loading) return <Spinner label="Loading your dashboard..." />;
 
@@ -156,6 +198,67 @@ function Dashboard() {
           </ul>
         )}
       </section>
+
+      <section>
+        <h2 className={styles.sectionTitle}>Saved Transcripts</h2>
+        <Card className={styles.transcriptsCard}>
+          {transcripts.length === 0 ? (
+            <p className={styles.emptyText}>No transcripts saved locally yet - finish a session to save one.</p>
+          ) : (
+            <>
+              <p className={styles.transcriptsCount}>{transcripts.length} saved locally</p>
+              <ul className={styles.transcriptsList}>
+                {recentTranscripts.map((entry) => (
+                  <li key={entry.sessionId} className={styles.transcriptItem}>
+                    <span className={styles.transcriptMeta}>
+                      {BUSINESS_LABELS[entry.businessType] ?? entry.businessType} &middot;{' '}
+                      {DIFFICULTY_LABELS[entry.difficulty] ?? entry.difficulty} &middot; {formatDate(entry.endedAt)}
+                      {typeof entry.overallScore === 'number' ? ` · ${entry.overallScore}/100` : ''}
+                    </span>
+                    <Button variant="ghost" onClick={() => setViewingTranscript(entry)}>
+                      View
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+          <div className={styles.transcriptsActions}>
+            <Button variant="secondary" disabled={transcripts.length === 0} onClick={handleDownloadAllTranscripts}>
+              Download all
+            </Button>
+            <Button variant="secondary" disabled={transcripts.length === 0} onClick={handleCopyAllTranscripts}>
+              Copy all
+            </Button>
+            <Button variant="danger" disabled={transcripts.length === 0} onClick={() => setConfirmClearOpen(true)}>
+              Clear
+            </Button>
+            {copyAllStatus === 'copied' && <span className={styles.copyHint}>Copied!</span>}
+          </div>
+        </Card>
+      </section>
+
+      <Modal isOpen={confirmClearOpen} onClose={() => setConfirmClearOpen(false)} title="Clear saved transcripts?">
+        <p className={styles.confirmText}>
+          This deletes all {transcripts.length} transcript{transcripts.length === 1 ? '' : 's'} saved locally on this
+          device. This can&apos;t be undone.
+        </p>
+        <div className={styles.confirmActions}>
+          <Button variant="secondary" onClick={() => setConfirmClearOpen(false)}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleClearTranscripts}>
+            Clear all
+          </Button>
+        </div>
+      </Modal>
+
+      <TranscriptModal
+        isOpen={Boolean(viewingTranscript)}
+        onClose={() => setViewingTranscript(null)}
+        transcript={viewingTranscript?.text || ''}
+        filename={viewingTranscript ? `sales-coach-${viewingTranscript.sessionId}.txt` : 'transcript.txt'}
+      />
     </div>
   );
 }

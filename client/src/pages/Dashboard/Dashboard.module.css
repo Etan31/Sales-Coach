@@ -122,6 +122,66 @@
   font-weight: var(--sc-fw-semibold);
 }
 
+.transcriptsCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-space-3);
+}
+
+.transcriptsCount {
+  color: var(--sc-text-muted);
+  font-size: var(--sc-fs-sm);
+  margin: 0;
+}
+
+.transcriptsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-space-2);
+}
+
+.transcriptItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-space-3);
+  padding: var(--sc-space-2) var(--sc-space-3);
+  background: var(--sc-surface-2);
+  border-radius: var(--sc-radius);
+}
+
+.transcriptMeta {
+  font-size: var(--sc-fs-sm);
+  color: var(--sc-text-muted);
+}
+
+.transcriptsActions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sc-space-3);
+}
+
+.copyHint {
+  font-size: var(--sc-fs-sm);
+  color: var(--sc-success);
+  font-weight: var(--sc-fw-medium);
+}
+
+.confirmText {
+  color: var(--sc-text-muted);
+  margin: 0 0 var(--sc-space-4);
+}
+
+.confirmActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sc-space-3);
+}
+
 @media (min-width: 640px) {
   .header {
     flex-direction: row;
