@@ -1,12 +1,14 @@
 .backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(16, 24, 48, 0.5);
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: var(--sc-space-4);
   z-index: 1000;
+  animation: sc-backdrop-in 160ms ease;
 }
 
 .dialog {
@@ -15,9 +17,11 @@
   max-height: 90vh;
   overflow-y: auto;
   background: var(--sc-surface);
+  border: 1px solid var(--sc-border);
   border-radius: var(--sc-radius-lg);
   box-shadow: var(--sc-shadow-lg);
   padding: var(--sc-space-5);
+  animation: sc-dialog-in 200ms var(--sc-ease-out);
 }
 
 .dialog:focus {
@@ -26,11 +30,26 @@
 
 .title {
   margin: 0 0 var(--sc-space-4);
+  font-family: var(--sc-font-display);
   font-size: var(--sc-fs-lg);
   font-weight: var(--sc-fw-semibold);
+  letter-spacing: var(--sc-tracking-tight);
   color: var(--sc-text);
 }
 
 .content {
   color: var(--sc-text);
+}
+
+@keyframes sc-backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes sc-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
 }

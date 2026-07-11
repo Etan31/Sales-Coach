@@ -15,9 +15,10 @@
   white-space: pre-wrap;
 }
 
-.textarea:focus {
-  outline: 2px solid var(--sc-primary);
-  outline-offset: 2px;
+.textarea:focus-visible {
+  outline: none;
+  border-color: var(--sc-primary);
+  box-shadow: var(--sc-ring);
 }
 
 .actions {

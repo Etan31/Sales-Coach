@@ -1,7 +1,7 @@
 .field {
   display: flex;
   flex-direction: column;
-  gap: var(--sc-space-1);
+  gap: var(--sc-space-2);
 }
 
 .label {
@@ -11,15 +11,29 @@
 }
 
 .select {
-  padding: var(--sc-space-2) var(--sc-space-3);
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 10px var(--sc-space-5) 10px var(--sc-space-3);
   border: 1px solid var(--sc-border);
   border-radius: var(--sc-radius);
-  background: var(--sc-surface);
+  background-color: var(--sc-surface);
   color: var(--sc-text);
   font-size: var(--sc-fs-md);
+  line-height: 1.4;
+  cursor: pointer;
+  /* Custom slate chevron */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--sc-space-3) center;
+  transition: border-color var(--sc-transition), box-shadow var(--sc-transition);
 }
 
-.select:focus {
-  outline: 2px solid var(--sc-primary);
-  outline-offset: 1px;
+.select:hover {
+  border-color: var(--sc-border-strong);
+}
+
+.select:focus-visible {
+  outline: none;
+  border-color: var(--sc-primary);
+  box-shadow: var(--sc-ring);
 }

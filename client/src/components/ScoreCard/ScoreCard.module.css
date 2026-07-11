@@ -22,8 +22,10 @@
 }
 
 .score {
+  font-family: var(--sc-font-display);
   font-size: var(--sc-fs-md);
   font-weight: var(--sc-fw-semibold);
+  font-variant-numeric: tabular-nums;
   color: var(--sc-text);
 }
 
@@ -37,7 +39,7 @@
 .bar {
   height: 100%;
   border-radius: var(--sc-radius-full);
-  transition: width var(--sc-transition);
+  transition: width 500ms var(--sc-ease-out);
 }
 
 .good {
