@@ -1,11 +1,33 @@
 /* Design tokens. Single source of truth for colors, spacing, type, radius, shadow.
-   All components consume var(--sc-*) tokens; do not hardcode raw values. */
+   All components consume var(--sc-*) tokens; do not hardcode raw values.
+
+   Direction: "Confident light" — slate neutrals + a single emerald accent.
+   One accent (emerald) owns all interactive chrome. Type pairs Space Grotesk
+   (display) with Inter (body/UI). Both are self-hosted (no external <link>). */
+
+/* Self-hosted variable fonts (latin subset). font-display: swap avoids FOUT. */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/inter-latin-wght-normal.woff2') format('woff2-variations');
+}
+
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('/fonts/space-grotesk-latin-wght-normal.woff2') format('woff2-variations');
+}
 
 :root {
   color-scheme: light;
 
-  /* Type - system stack, no external webfont (self-contained, no FOUT) */
-  --sc-font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  /* Type — Inter for body/UI, Space Grotesk for display + numerics */
+  --sc-font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --sc-font-display: 'Space Grotesk', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --sc-font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
 
   --sc-fs-xs: 0.75rem;
@@ -21,44 +43,60 @@
   --sc-fw-semibold: 600;
   --sc-fw-bold: 700;
 
-  /* Surfaces + text */
-  --sc-bg: #f5f7fb;
-  --sc-surface: #ffffff;
-  --sc-surface-2: #eef1f8;
-  --sc-border: #e1e6f0;
-  --sc-text: #161b2e;
-  --sc-text-muted: #5a6379;
-  --sc-text-faint: #8b93a7;
+  /* Tracking — tighten display type, let it breathe on small caps */
+  --sc-tracking-tight: -0.02em;
+  --sc-tracking-tighter: -0.035em;
+  --sc-tracking-wide: 0.04em;
 
-  /* Brand */
-  --sc-primary: #4f46e5;
-  --sc-primary-hover: #4338ca;
-  --sc-primary-soft: #eef0fe;
+  /* Surfaces + text — slate ramp */
+  --sc-bg: #f6f8fb;
+  --sc-surface: #ffffff;
+  --sc-surface-2: #f1f5f9;
+  --sc-surface-3: #e9eef5;
+  --sc-border: #e2e8f0;
+  --sc-border-strong: #cbd5e1;
+  --sc-text: #0f172a;
+  --sc-text-muted: #475569;
+  --sc-text-faint: #94a3b8;
+
+  /* Brand — emerald (single accent, owns all interactive chrome) */
+  --sc-primary: #059669;
+  --sc-primary-hover: #047857;
+  --sc-primary-active: #065f46;
+  --sc-primary-soft: #ecfdf5;
+  --sc-primary-soft-border: #a7f3d0;
   --sc-primary-contrast: #ffffff;
-  --sc-accent: #06b6d4;
-  --sc-accent-soft: #e0f7fb;
+
+  /* Secondary data-viz hue only (harmonized teal) — never UI chrome */
+  --sc-accent: #0d9488;
+  --sc-accent-soft: #f0fdfa;
+
+  /* Focus ring */
+  --sc-ring-color: #059669;
+  --sc-ring: 0 0 0 3px rgba(5, 150, 105, 0.32);
 
   /* Status */
-  --sc-success: #16a34a;
-  --sc-success-soft: #e7f6ec;
-  --sc-warning: #d97706;
-  --sc-warning-soft: #fdf1de;
+  --sc-success: #059669;
+  --sc-success-soft: #ecfdf5;
+  --sc-warning: #b45309;
+  --sc-warning-soft: #fef3c7;
   --sc-danger: #dc2626;
-  --sc-danger-soft: #fbe9e9;
+  --sc-danger-soft: #fee2e2;
   --sc-info: #2563eb;
+  --sc-info-soft: #eff6ff;
 
-  /* Chat bubbles */
-  --sc-bubble-owner-bg: #eef1f8;
-  --sc-bubble-owner-text: #161b2e;
-  --sc-bubble-seller-bg: #4f46e5;
+  /* Chat bubbles — owner (business owner) neutral, seller (you) brand */
+  --sc-bubble-owner-bg: #f1f5f9;
+  --sc-bubble-owner-text: #0f172a;
+  --sc-bubble-seller-bg: #059669;
   --sc-bubble-seller-text: #ffffff;
 
-  /* Logo / favicon monogram (near-black with hue cast + bright accent letter) */
-  --sc-logo-bg: #0b1020;
-  --sc-logo-letter: #22d3ee;
+  /* Logo / favicon monogram (slate square + bright emerald letter) */
+  --sc-logo-bg: #0f172a;
+  --sc-logo-letter: #34d399;
 
-  /* Radius */
-  --sc-radius-sm: 6px;
+  /* Radius — shape lock: controls/inputs 10px, cards/panels 16px, pills full */
+  --sc-radius-sm: 8px;
   --sc-radius: 10px;
   --sc-radius-lg: 16px;
   --sc-radius-full: 999px;
@@ -73,17 +111,18 @@
   --sc-space-7: 48px;
   --sc-space-8: 64px;
 
-  /* Shadows */
-  --sc-shadow-sm: 0 1px 2px rgba(16, 24, 48, 0.06);
-  --sc-shadow: 0 4px 16px rgba(16, 24, 48, 0.08);
-  --sc-shadow-lg: 0 12px 32px rgba(16, 24, 48, 0.14);
+  /* Shadows — tinted to the slate hue, never pure black */
+  --sc-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --sc-shadow: 0 4px 20px -6px rgba(15, 23, 42, 0.12);
+  --sc-shadow-lg: 0 20px 44px -16px rgba(15, 23, 42, 0.22);
 
   /* Layout */
   --sc-container: 1120px;
   --sc-sidebar-w: 300px;
-  --sc-header-h: 60px;
+  --sc-header-h: 64px;
 
   --sc-transition: 160ms ease;
+  --sc-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 * {
@@ -99,15 +138,22 @@ body {
 body {
   font-family: var(--sc-font-sans);
   font-size: var(--sc-fs-md);
-  line-height: 1.5;
+  line-height: 1.55;
   color: var(--sc-text);
   background: var(--sc-bg);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 a {
   color: var(--sc-primary);
   text-decoration: none;
+}
+
+a:hover {
+  color: var(--sc-primary-hover);
+  text-decoration: underline;
 }
 
 button {
@@ -116,4 +162,9 @@ button {
 
 #root {
   min-height: 100vh;
+}
+
+::selection {
+  background: var(--sc-primary-soft);
+  color: var(--sc-primary-active);
 }

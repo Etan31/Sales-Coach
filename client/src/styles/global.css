@@ -25,8 +25,15 @@ h4,
 h5,
 h6 {
   margin: 0 0 var(--sc-space-3);
+  font-family: var(--sc-font-display);
   font-weight: var(--sc-fw-semibold);
-  line-height: 1.25;
+  line-height: 1.15;
+  letter-spacing: var(--sc-tracking-tight);
+  color: var(--sc-text);
+}
+
+h1 {
+  letter-spacing: var(--sc-tracking-tighter);
 }
 
 p {
@@ -53,4 +60,29 @@ fieldset {
   border: 0;
   margin: 0;
   padding: 0;
+}
+
+/* Consistent keyboard-focus ring across all interactive elements. Mouse clicks
+   stay clean (:focus-visible only). Individual components may layer their own. */
+:focus-visible {
+  outline: 2px solid var(--sc-ring-color);
+  outline-offset: 2px;
+  border-radius: var(--sc-radius-sm);
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: none;
+  box-shadow: var(--sc-ring);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
