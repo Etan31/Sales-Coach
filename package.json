@@ -1,0 +1,31 @@
+{
+  "name": "sales-coach",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "AI Sales Coach - practice selling websites to AI-roleplayed small business owners.",
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@11.0.9",
+  "scripts": {
+    "dev": "pnpm --parallel --filter ./client --filter ./server dev",
+    "dev:client": "pnpm --filter ./client dev",
+    "dev:server": "pnpm --filter ./server dev",
+    "build": "pnpm --filter ./client build",
+    "start": "pnpm --filter ./server start",
+    "test": "pnpm -r test",
+    "test:server": "pnpm --filter ./server test",
+    "test:client": "pnpm --filter ./client test",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.15.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^9.15.0",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "globals": "^15.12.0"
+  }
+}
