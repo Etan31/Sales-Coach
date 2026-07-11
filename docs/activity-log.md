@@ -1,0 +1,79 @@
+# Activity Log
+
+Format: date - summary - decision/outcome. Newest last.
+
+## 2026-07-10 - Project bootstrap
+
+- Initialized pnpm monorepo (client + server workspaces) for the AI Sales Coach app.
+- Locked architecture decisions with the user:
+  - Auth: Supabase Auth (managed) + `profiles` table + DB trigger. No custom password table.
+  - Backend deploy: Vercel serverless (Express app exported from `api/index.js`).
+  - Delivery: orchestrated milestones via parallel subagents (Opus orchestrator, Sonnet workers).
+  - Language selection controls AI speech + evaluation output only; UI chrome stays English.
+- Reconciliations: `/api/auth/*` handled by the frontend Supabase client (no backend proxy);
+  RLS enforced via a per-request token-scoped Supabase client; `business_profiles` is a seed
+  archetype table while the randomized per-session profile is snapshotted into
+  `practice_sessions.business_profile` (jsonb); charts are hand-rolled SVG; Gemini evaluation
+  uses schema-enforced JSON with a `GEMINI_MOCK` offline mode.
+- Wrote `docs/contracts.md` as the single source of truth for all subagents.
+
+## 2026-07-10 - Wave 2: backend domain + frontend pages
+
+- Backend: implemented the full Express domain per `docs/contracts.md` -- `routes/` ->
+  `controllers/` -> `services/` -> `repositories/`, Zod validation (`middleware/validate.js`),
+  Supabase admin/user clients (`database/supabaseClient.js`), Supabase JWT auth middleware
+  (`middleware/auth.js`), Pino logging, Helmet/CORS/rate limiting (`middleware/security.js`,
+  `middleware/rateLimit.js`), and `gemini/geminiService.js` (roleplay + evaluation, both honoring
+  `GEMINI_MOCK`). `src/app.js` exports a bare Express app (no `.listen`); `src/index.js` is the
+  local dev entry; `api/index.js` re-exports the app as the Vercel serverless handler.
+- Database: `supabase/migrations/0001_init.sql` (schema + `handle_new_user` trigger),
+  `0002_rls.sql` (RLS on all 5 tables), `supabase/seed/business_profiles.sql` (10 archetypes).
+  Documented in `docs/DATABASE.md`.
+- Frontend: React Router pages for the full flow (`Login`, `Register`, `Dashboard`,
+  `PracticeSetup`, `Conversation`, `Evaluation`, catch-all `NotFound`), `AuthContext` +
+  `ProtectedRoute`, `services/api/` typed wrappers over `httpClient.js`, reusable components
+  (`Button`, `Card`, `Modal`, `ChatBubble`, `ScoreCard`, `StatCard`, `Chart`, `ErrorPage`, ...),
+  CSS Modules throughout.
+
+## 2026-07-10 - Wave 3: tests, CI/CD, docs
+
+- CI/CD: added `.github/workflows/ci.yml` -- single `ubuntu-latest` / Node 20 job: checkout,
+  `pnpm/action-setup@v4` (reads the `packageManager` field), `actions/setup-node@v4` with
+  `cache: 'pnpm'`, `pnpm install --frozen-lockfile`, `pnpm lint`, `pnpm -r test` (with dummy
+  `SUPABASE_URL`/`SUPABASE_ANON_KEY`/`SUPABASE_SERVICE_ROLE_KEY` and `GEMINI_MOCK: '1'` so config
+  validation and Gemini calls stay offline in CI), then `pnpm --filter ./client build`. Triggers
+  on push and PR to `main`; fails the pipeline on any lint/test/build failure.
+- Docs: wrote `docs/API.md` (every endpoint from `docs/contracts.md` -- method, path, auth,
+  request/response shapes, error codes, in the CLAUDE.md example format; notes that
+  registration/login are client-side via the Supabase JS client and the backend only verifies the
+  JWT); rewrote the top-level `README.md` (overview, architecture, folder structure, prerequisites,
+  setup incl. env var table and DB migration pointer, local dev, testing, deployment, key endpoints
+  table linking to `docs/API.md`).
+- Noted for follow-up (out of scope for this wave): the checked-in root `.env` defines
+  `SUPABASE_SERVICE_KEY`, but `server/src/config/index.js` actually requires
+  `SUPABASE_SERVICE_ROLE_KEY` -- the README/API docs document the variable name the code actually
+  reads (`SUPABASE_SERVICE_ROLE_KEY`); `.env` itself was left untouched (out of this agent's scope).
+  Also, no `.env.example` file exists in this checkout -- README setup steps were written to have
+  the user create `.env` directly rather than assume a template that isn't there.
+
+## 2026-07-11 - Wave 3 test suite completed + Wave 4 integration (orchestrator)
+
+- The Wave 3G test subagent hit the account session limit and terminated after creating the jest
+  config/setup, `test-helpers/fakeSupabase.js`, and 5 server unit tests (profileGenerator,
+  objectionLibrary, mappers, schemas, geminiService). The orchestrator finished the wave directly:
+  - Added server service/integration tests: `chatService.test.js`, `evaluationService.test.js`,
+    `statisticsService.test.js` (driving real repositories through the `fakeSupabase` chainable
+    thenable), and `app.test.js` (supertest against the assembled app: health 200, config 200,
+    protected route 401, unknown route 404). Added `import { jest }` to `fakeSupabase.js` for ESM.
+  - Added the client test toolchain: `client/jest.config.cjs` (jsdom + babel-jest, CSS Modules ->
+    identity-obj-proxy), `client/babel.config.cjs`, `client/src/setupTests.js`, and RTL tests for
+    Button, ChatBubble, ErrorPage, Accordion, and the Login page (AuthContext mocked so the
+    `import.meta.env` supabase client is never loaded under babel-jest).
+- Fixes made during integration:
+  - `server/src/config/index.js` now accepts `SUPABASE_SERVICE_KEY` as a fallback for
+    `SUPABASE_SERVICE_ROLE_KEY`, resolving the earlier .env var-name mismatch (either name works).
+  - `eslint.config.js` gained a `**/*.cjs` block (commonjs + node globals) so the jest/babel
+    tooling configs lint cleanly.
+- Final verification (all green): `pnpm lint` 0 errors/0 warnings; `pnpm -r test` = 88 passing
+  (server 71, client 17); `pnpm --filter ./client build` succeeds. Full app runs offline via
+  `GEMINI_MOCK=1`. Not committed (per CLAUDE.md no-auto-commit).
