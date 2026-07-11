@@ -116,20 +116,25 @@ catch (error) {
 
 ### Logo & Favicon
 
-Default theme for any new project's logo/favicon: a single-letter monogram badge, not an
+Default theme for any new project's logo/favicon: a one- or two-letter monogram badge, not an
 abstract icon or mascot. Document the contract here so it's reused, not reinvented per project.
 
 **Pattern:**
-- **Shape:** a rounded-square "box" (not a circle), one letter — the project's initial —
-  centered inside it. Corner radius roughly 25-30% of the box side (a squircle/app-icon feel,
-  not a subtle rounded rect).
+- **Shape:** pick the badge shape per project instead of defaulting to rounded-square every
+  time. Choose by theme: **squircle/rounded-square** (default, neutral, safe for most apps;
+  corner radius 25-30% of the box side), **circle** (social/conversational apps — chat,
+  messaging, community), **hexagon** (gamified, scoring, or coaching/leveling apps — reads as an
+  achievement badge), **pentagon/shield** (security, certification, trust-first apps — use
+  sparingly, reads oddly if the point isn't balanced). Whatever the shape, soften its corners
+  slightly (yes, even hexagons/pentagons) so it matches the app's general roundness, and keep
+  the monogram centered on the shape's true geometric center, not its bounding box.
 - **Colors:** near-black background with a visible hue cast (not pure black/gray — pick the
   brand's primary hue and darken it toward black), with the letter rendered in a bright
   accent/highlight color from the palette so it pops against the dark box. Avoid plain
   white-on-brand-color or brand-color-on-white; the dark-box-plus-highlight-letter combo reads
   as more premium and matches the reference apps this convention is based on.
-- **Font:** use the project's single body/heading font (see the Fonts rule above), bold weight
-  (700-800), not a hand-drawn vector glyph — a real `<text>` element renders more legibly at
+- **Font:** use the project's display or heading font (see the Fonts rule above), bold weight
+  (600-800), not a hand-drawn vector glyph — a real `<text>` element renders more legibly at
   favicon sizes and stays consistent with the rest of the UI's type.
 - **Two render targets, same design:**
   1. `public/favicon.svg` (or equivalent), referenced from `index.html`'s `<link rel="icon">`.
@@ -152,22 +157,22 @@ abstract icon or mascot. Document the contract here so it's reused, not reinvent
   the new icon — browsers cache favicons separately from the page. Verify by hitting the SVG's
   URL directly in a new tab, or an incognito window, before concluding a code change failed.
 
-**Nexus Employee Portal (this project) — implemented record:**
+**Sales Coach (this project) — implemented record:**
 
 - **Files:** `client/public/favicon.svg` (standalone, hardcoded hex) and
-  `client/src/components/NexusLogo/NexusLogo.jsx` (in-app, `var(--nx-*)` tokens) — both draw
-  the same "N" monogram and must be kept visually in sync by hand.
-- **Colors:** background is `--nx-logo-bg` (`#060a18`, theme.css) — a new token scoped to the
-  logo only (not a general surface color; do not reuse elsewhere). Letter is `--nx-accent`
-  (`#38bdf8`), the existing highlight/accent token.
-- **Font:** in-app uses `'Plus Jakarta Sans', sans-serif` (the app's one loaded font) at
-  `font-weight: 800`; the standalone favicon falls back to `Arial, Helvetica, sans-serif` bold
-  since it can't load the webfont outside the page context.
-- **Shape:** `rx="9"` rounded rect on a 30x30 box inside a 32x32 viewBox (roughly 30% corner
-  radius), letter centered via `text-anchor="middle"` + `dominant-baseline="middle"`.
-- **Title:** `index.html`'s `<title>` was also updated to `Nexus Employee Portal` (was the
-  generic scaffold default `employee-portal`) so the browser tab reads correctly next to the
-  new favicon.
+  `client/src/components/SalesCoachLogo/SalesCoachLogo.jsx` (in-app, `var(--sc-*)` tokens) —
+  both draw the same "S" monogram, kept in sync by hand.
+- **Colors:** background `--sc-logo-bg` (`#0f172a`, slate-900) — a logo-scoped token; letter
+  `--sc-logo-letter` (`#34d399`, emerald-400), the bright accent.
+- **Font:** in-app uses `var(--sc-font-display)` (Space Grotesk) at `font-weight: 700`,
+  `letter-spacing: -0.02em`; the favicon declares `'Space Grotesk', Arial, Helvetica, sans-serif`
+  so it renders Arial bold outside the page context.
+- **Shape:** flat-top hexagon, not the default squircle — chosen because the app scores and
+  ranks practice sessions (StatCard/ScoreCard/Evaluation), so a badge/level-marker shape fits.
+  Regular hexagon, circumradius 14, centered at (16,16) in the 32x32 viewBox, corners rounded
+  ~3px via quadratic curves so it reads soft, not sharp. Letter centered via
+  `text-anchor="middle"` + `dominant-baseline="central"` at `font-size: 17`.
+- **Title:** `index.html`'s `<title>` is `Sales Coach`.
 
 ### Database (Supabase / Postgres)
 
