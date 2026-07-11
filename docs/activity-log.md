@@ -113,3 +113,29 @@ Format: date - summary - decision/outcome. Newest last.
   confirms their Groq key works.
 - Verification: `pnpm --filter ./server test` and `pnpm lint` both green after the migration (see
   below for exact counts). Not committed (per CLAUDE.md no-auto-commit).
+
+## 2026-07-11 - Cold-Call voice mode + local transcript library (orchestrated, frontend-only)
+
+- Two parallel Sonnet subagents (Opus orchestrating) on disjoint files; no backend/prompt changes.
+- Voice (Agent V): browser Web Speech API only, zero added requests (only the existing `/api/chat`
+  Groq call per turn). New `client/src/hooks/useSpeechRecognition.js` (`{ language, onResult }` ->
+  `{ isSupported, isListening, interimTranscript, error, start, stop, reset }`, callback delivers the
+  final utterance since `onend` is event-driven), `useSpeechSynthesis.js` (`speak(text,{language})`,
+  `cancel`), and `utils/speechLang.js` (`appLangToBcp47`: english->en-US, tagalog/taglish->fil-PH).
+  New `pages/Conversation/VoiceInputBar.jsx` (mic button + live interim transcript + "type instead"
+  fallback + unsupported-browser fallback). `Conversation.jsx`: extracted the send logic into a
+  reusable `sendMessage(text)` (text form + voice bar share it), branches on
+  `session.contactMethod === 'cold_call'`, speaks the owner reply when `!muted`, adds a mute toggle,
+  cancels speech on unmount / End Conversation. All Web Speech access via `window.*` to satisfy
+  eslint `no-undef`.
+- Transcript/library (Agent T): `utils/transcript.js` (`formatTranscript`, `downloadTextFile`),
+  `services/localTranscripts.js` (localStorage key `salescoach.transcripts`; `saveTranscript`/
+  `getTranscripts`/`getTranscript`/`clearTranscripts`; dedupe by sessionId, newest-first, cap 50,
+  all try/catch), `components/TranscriptModal/` (copyable textarea + Copy/Download/Close on the
+  shared `Modal`). `Evaluation.jsx` now captures `messages` (was discarded), auto-saves the
+  transcript once per session, and offers View/Copy/Download. `Dashboard.jsx` gained a "Saved
+  Transcripts" card (count, recent list w/ View, Download all / Copy all / Clear). Nothing saved to
+  the server - export/library is local-only per the user's requirement.
+- Verification (all green): `pnpm lint` clean; `pnpm -r test` = 112 passing (server 71, client 41 -
+  up from 17, +24 new tests incl. VoiceInputBar/useSpeechRecognition, transcript, localTranscripts,
+  TranscriptModal); `pnpm --filter ./client build` succeeds. Not committed (per CLAUDE.md).
