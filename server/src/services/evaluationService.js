@@ -1,11 +1,11 @@
 import * as sessionRepository from '../repositories/sessionRepository.js';
 import * as messageRepository from '../repositories/messageRepository.js';
 import * as evaluationRepository from '../repositories/evaluationRepository.js';
-import { evaluateConversation } from '../gemini/geminiService.js';
+import { evaluateConversation } from '../ai/aiService.js';
 import { toEvaluationObject } from '../utils/mappers.js';
 import { NotFoundError, ConflictError } from '../utils/errors.js';
 
-// Scores the finished conversation with Gemini, persists the evaluation, and marks the session completed.
+// Scores the finished conversation with the AI provider, persists the evaluation, and marks the session completed.
 export async function endSession(sb, sessionId) {
   const session = await sessionRepository.getSessionById(sb, sessionId);
   if (!session) throw new NotFoundError('Session not found');

@@ -19,10 +19,11 @@ closing, plus strengths/weaknesses/missed opportunities/better responses/next pr
   serverless function (`api/index.js`).
 - **Database & Auth:** Supabase (Postgres with Row Level Security on every table, and
   Supabase Auth for signup/login/session management).
-- **AI:** Google Gemini, used in two distinct modes:
+- **AI:** [Groq](https://console.groq.com) (OpenAI-compatible chat completions API), used in two
+  distinct modes:
   1. **Roleplay mode** — generates the AI business owner's in-character reply during the chat.
   2. **Evaluation mode** — generates the structured JSON coaching evaluation once a session ends.
-  Both modes support `GEMINI_MOCK=1` to return canned responses with no network call or API key,
+  Both modes support `AI_MOCK=1` to return canned responses with no network call or API key,
   for offline development and CI.
 
 ```
@@ -30,7 +31,7 @@ Browser (React) --Supabase JS client--> Supabase Auth (signup/login/session)
        |
        |--HTTP (Bearer <supabase JWT>)--> Express API --> Supabase Postgres (RLS)
                                               |
-                                              +--> Google Gemini (roleplay / evaluation)
+                                              +--> Groq (roleplay / evaluation)
 ```
 
 ## Folder structure
@@ -51,7 +52,7 @@ Sales_Coach/
       config/                 Validated env config
       routes/ controllers/    Thin HTTP layer
       services/ repositories/ Business logic + Supabase data access
-      gemini/ prompts/         Gemini client + roleplay/evaluation prompt builders
+      ai/ prompts/             Groq client + roleplay/evaluation prompt builders
       middleware/               auth, validate, rateLimit, security, errorHandler
   supabase/
     migrations/               0001_init.sql (schema), 0002_rls.sql (RLS policies)
@@ -70,10 +71,10 @@ Sales_Coach/
 
 - Node.js >= 22.13
 - pnpm (version pinned via the root `package.json` `packageManager` field)
-- A [Supabase](https://supabase.com) project (Postgres + Auth) — or skip Gemini setup entirely
+- A [Supabase](https://supabase.com) project (Postgres + Auth) — or skip Groq setup entirely
   and still exercise the DB layer against a real Supabase project
-- A Google Gemini API key — **or** set `GEMINI_MOCK=1` to run the whole app (and the test suite)
-  fully offline with canned AI responses
+- A [Groq](https://console.groq.com) API key (free tier, no credit card) — **or** set
+  `AI_MOCK=1` to run the whole app (and the test suite) fully offline with canned AI responses
 
 ## Setup
 
@@ -104,16 +105,16 @@ Sales_Coach/
    | `SUPABASE_URL` | server | Supabase project URL |
    | `SUPABASE_ANON_KEY` | server | Supabase anon/public key — used to build a token-scoped, RLS-respecting client per request |
    | `SUPABASE_SERVICE_ROLE_KEY` | server | Supabase service-role key — admin client, server-only, **never** exposed to the client |
-   | `GEMINI_API_KEY` | server | Google Gemini API key (not required when `GEMINI_MOCK=1`) |
-   | `GEMINI_MODEL` | server | Gemini model name (e.g. `gemini-2.0-flash`) |
-   | `GEMINI_MOCK` | server | `1` to bypass real Gemini calls and use canned roleplay/evaluation responses |
+   | `GROQ_API_KEY` | server | Groq API key (not required when `AI_MOCK=1`) |
+   | `GROQ_MODEL` | server | Groq model name (e.g. `llama-3.3-70b-versatile`) |
+   | `AI_MOCK` | server | `1` to bypass real Groq calls and use canned roleplay/evaluation responses |
    | `AI_RATE_LIMIT_WINDOW_MS` / `AI_RATE_LIMIT_MAX` | server | Rate limit window/max for `/api/chat` and `/api/end-session` |
    | `VITE_SUPABASE_URL` | client (public) | Same Supabase project URL, exposed to the browser |
    | `VITE_SUPABASE_ANON_KEY` | client (public) | Supabase anon key — safe to expose; RLS enforces access control, not secrecy of this key |
    | `VITE_API_BASE_URL` | client (public) | Base URL the frontend calls, e.g. `http://localhost:3001/api` |
 
    Any `VITE_`-prefixed variable ships to the browser bundle — never put a secret there. Server
-   secrets (`SUPABASE_SERVICE_ROLE_KEY`, `GEMINI_API_KEY`) must only ever appear in the
+   secrets (`SUPABASE_SERVICE_ROLE_KEY`, `GROQ_API_KEY`) must only ever appear in the
    non-`VITE_` section.
 
 3. Run the database migrations and seed data against your Supabase project — see
@@ -141,9 +142,9 @@ pnpm dev:server      # server only (nodemon)
 Ports are fixed (`strictPort: true` in `client/vite.config.js`, `API_PORT` in `.env`) to avoid
 monorepo dev-server collisions.
 
-### Offline / no Gemini key
+### Offline / no Groq key
 
-Set `GEMINI_MOCK=1` in `.env` to run the full roleplay + evaluation flow with canned Gemini
+Set `AI_MOCK=1` in `.env` to run the full roleplay + evaluation flow with canned AI
 responses — no network call, no API key required. This is also how CI runs the test suite (see
 below).
 
@@ -173,7 +174,7 @@ Deployed as a single [Vercel](https://vercel.com) project:
 
 Required environment variables on Vercel (Project Settings -> Environment Variables) — same
 names/purposes as the local `.env` table above: `SUPABASE_URL`, `SUPABASE_ANON_KEY`,
-`SUPABASE_SERVICE_ROLE_KEY`, `GEMINI_API_KEY`, `GEMINI_MODEL`, `GEMINI_MOCK`, `CORS_ORIGIN`,
+`SUPABASE_SERVICE_ROLE_KEY`, `GROQ_API_KEY`, `GROQ_MODEL`, `AI_MOCK`, `CORS_ORIGIN`,
 `AI_RATE_LIMIT_WINDOW_MS`, `AI_RATE_LIMIT_MAX`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`,
 `VITE_API_BASE_URL` (pointed at the deployed origin, e.g. `https://your-app.vercel.app/api`).
 
@@ -181,7 +182,7 @@ See **[docs/API.md](docs/API.md)** for the full endpoint reference and
 **[docs/DATABASE.md](docs/DATABASE.md)** for the schema/RLS/migrations this deployment depends on.
 
 CI (`.github/workflows/ci.yml`) runs on every push/PR to `main`: install, lint, test (with
-`GEMINI_MOCK=1` and dummy Supabase env vars so config validation passes without real secrets),
+`AI_MOCK=1` and dummy Supabase env vars so config validation passes without real secrets),
 then build the client. The pipeline fails the build if any of those steps fail.
 
 ## Key API endpoints

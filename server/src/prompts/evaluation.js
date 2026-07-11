@@ -1,5 +1,3 @@
-import { SchemaType } from '@google/generative-ai';
-
 // Human-readable language name for the "write feedback in X" instruction.
 const LANGUAGE_LABELS = {
   english: 'English',
@@ -63,49 +61,3 @@ Then set overallScore from 0 to 100 as a holistic judgment of the whole attempt 
 # OUTPUT
 Output ONLY the raw JSON object with exactly these keys: overallScore, rapport, businessDiscovery, confidence, handlingObjections, valueSelling, closing, summary, strengths, weaknesses, missedOpportunities, nextPracticeFocus, betterResponses. No markdown, no code fences, no commentary before or after.`;
 }
-
-// Gemini responseSchema that enforces the exact evaluation JSON shape (structured output).
-export const EVALUATION_RESPONSE_SCHEMA = {
-  type: SchemaType.OBJECT,
-  properties: {
-    overallScore: { type: SchemaType.INTEGER },
-    rapport: { type: SchemaType.INTEGER },
-    businessDiscovery: { type: SchemaType.INTEGER },
-    confidence: { type: SchemaType.INTEGER },
-    handlingObjections: { type: SchemaType.INTEGER },
-    valueSelling: { type: SchemaType.INTEGER },
-    closing: { type: SchemaType.INTEGER },
-    summary: { type: SchemaType.STRING },
-    strengths: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
-    weaknesses: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
-    missedOpportunities: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
-    nextPracticeFocus: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
-    betterResponses: {
-      type: SchemaType.ARRAY,
-      items: {
-        type: SchemaType.OBJECT,
-        properties: {
-          client: { type: SchemaType.STRING },
-          yourResponse: { type: SchemaType.STRING },
-          betterResponse: { type: SchemaType.STRING }
-        },
-        required: ['client', 'yourResponse', 'betterResponse']
-      }
-    }
-  },
-  required: [
-    'overallScore',
-    'rapport',
-    'businessDiscovery',
-    'confidence',
-    'handlingObjections',
-    'valueSelling',
-    'closing',
-    'summary',
-    'strengths',
-    'weaknesses',
-    'missedOpportunities',
-    'nextPracticeFocus',
-    'betterResponses'
-  ]
-};

@@ -2,7 +2,7 @@ import { chain, createFakeSupabase } from '../test-helpers/fakeSupabase.js';
 import { postMessage } from './chatService.js';
 import { ConflictError, NotFoundError } from '../utils/errors.js';
 
-// GEMINI_MOCK=1 (jest.setup.js) makes generateOwnerReply return a canned line, no network.
+// AI_MOCK=1 (jest.setup.js) makes generateOwnerReply return a canned line, no network.
 describe('chatService.postMessage', () => {
   const activeSession = {
     id: 's1',

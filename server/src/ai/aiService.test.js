@@ -1,6 +1,6 @@
-// GEMINI_MOCK=1 is set in jest.setup.js before config/index.js loads, so config.geminiMock is
+// AI_MOCK=1 is set in jest.setup.js before config/index.js loads, so config.aiMock is
 // true for this whole run and generateOwnerReply/evaluateConversation never touch the network.
-import { generateOwnerReply, evaluateConversation } from './geminiService.js';
+import { generateOwnerReply, evaluateConversation } from './aiService.js';
 
 describe('generateOwnerReply (mock mode)', () => {
   const profile = { business: 'Coffee Shop', ownerName: 'Carlos' };

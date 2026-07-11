@@ -77,3 +77,39 @@ Format: date - summary - decision/outcome. Newest last.
 - Final verification (all green): `pnpm lint` 0 errors/0 warnings; `pnpm -r test` = 88 passing
   (server 71, client 17); `pnpm --filter ./client build` succeeds. Full app runs offline via
   `GEMINI_MOCK=1`. Not committed (per CLAUDE.md no-auto-commit).
+
+## 2026-07-11 - Migrated AI provider from Google Gemini to Groq
+
+- Root cause of persistent real-Gemini 502/429s: every Google account/project tested (3 separate
+  accounts, including a fresh AI Studio Build-published key) returned either
+  `generate_content_free_tier_requests limit: 0` or a prepaid-credits-required error, even with
+  billing attached and the Generative Language API enabled. Diagnosed as account-level, not
+  fixable from code. User chose to switch providers to Groq (genuinely free tier, no prepay, no
+  credit card, OpenAI-compatible API).
+- Replaced `server/src/gemini/` (client.js, geminiService.js + test) with `server/src/ai/`
+  (`client.js` using the `groq-sdk` package's `chat.completions.create`, `aiService.js` with the
+  same mock-mode logic and public API unchanged: `generateOwnerReply`, `evaluateConversation`).
+  JSON mode uses Groq's `response_format: { type: 'json_object' }` (no fixed-schema enforcement
+  like Gemini's `responseSchema` - relies on the existing defensive `normalizeEvaluation()`
+  clamping/coercion, which was already schema-agnostic).
+- `prompts/roleplay.js`: `buildRoleplayContents` (Gemini `{role,parts}` shape) replaced with
+  `buildRoleplayMessages` (OpenAI-compatible `{role,content}`, owner -> `assistant`, seller ->
+  `user`); dropped the Gemini-specific "must start with user turn" trim (not required by
+  chat-completions, and chatService always seeds history with a seller message first anyway).
+- `prompts/evaluation.js`: removed the `@google/generative-ai` `SchemaType` import and the
+  `EVALUATION_RESPONSE_SCHEMA` export (Groq has no schema-enforcement equivalent in use here).
+- `config/index.js`: renamed `GEMINI_API_KEY/GEMINI_MODEL/GEMINI_MOCK` ->
+  `GROQ_API_KEY/GROQ_MODEL/AI_MOCK` (env) and `geminiApiKey/geminiModel/geminiMock` ->
+  `groqApiKey/groqModel/aiMock` (config object). Default model: `llama-3.3-70b-versatile`.
+  `AI_MOCK` is provider-neutral by design so a future provider swap doesn't need another rename.
+  `chatService.js`/`evaluationService.js` import paths updated to `../ai/aiService.js`.
+- Updated all references across `jest.setup.js`, `ci.yml`, `docs/contracts.md`, `docs/API.md`,
+  `docs/DATABASE.md`, `README.md`, `.env copy.example`. `server/package.json`: removed
+  `@google/generative-ai`, added `groq-sdk` (resolved `^0.9.1`). Deleted the leftover temp
+  `server/_validate-key.mjs` diagnostic script.
+- `.env`: added `GROQ_API_KEY` (placeholder - user pastes their real key directly, not via chat,
+  since two prior Gemini keys were already exposed in conversation and flagged for rotation),
+  `GROQ_MODEL=llama-3.3-70b-versatile`, left `AI_MOCK=1` as the safe default until the user
+  confirms their Groq key works.
+- Verification: `pnpm --filter ./server test` and `pnpm lint` both green after the migration (see
+  below for exact counts). Not committed (per CLAUDE.md no-auto-commit).

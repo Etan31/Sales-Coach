@@ -1,10 +1,10 @@
 import * as sessionRepository from '../repositories/sessionRepository.js';
 import * as messageRepository from '../repositories/messageRepository.js';
-import { generateOwnerReply } from '../gemini/geminiService.js';
+import { generateOwnerReply } from '../ai/aiService.js';
 import { toMessageObject } from '../utils/mappers.js';
 import { NotFoundError, ConflictError } from '../utils/errors.js';
 
-// Persists the seller's message, asks Gemini for the owner's in-character reply, persists it too.
+// Persists the seller's message, asks the AI provider for the owner's in-character reply, persists it too.
 export async function postMessage(sb, { sessionId, message }) {
   const session = await sessionRepository.getSessionById(sb, sessionId);
   if (!session) throw new NotFoundError('Session not found');

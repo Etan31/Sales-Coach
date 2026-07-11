@@ -8,7 +8,7 @@ const repoRoot = path.resolve(__dirname, '..', '..', '..');
 
 dotenv.config({ path: path.join(repoRoot, '.env') });
 
-const geminiMock = process.env.GEMINI_MOCK === '1' || process.env.GEMINI_MOCK === 'true';
+const aiMock = process.env.AI_MOCK === '1' || process.env.AI_MOCK === 'true';
 
 // Accept the legacy `SUPABASE_SERVICE_KEY` name as a fallback for the canonical
 // `SUPABASE_SERVICE_ROLE_KEY` so an existing .env with either name works.
@@ -21,8 +21,8 @@ const required = {
   SUPABASE_SERVICE_ROLE_KEY: supabaseServiceRoleKey
 };
 
-if (!geminiMock) {
-  required.GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+if (!aiMock) {
+  required.GROQ_API_KEY = process.env.GROQ_API_KEY;
 }
 
 const missing = Object.entries(required)
@@ -40,9 +40,9 @@ const config = {
   supabaseUrl: process.env.SUPABASE_URL,
   supabaseAnonKey: process.env.SUPABASE_ANON_KEY,
   supabaseServiceRoleKey,
-  geminiApiKey: process.env.GEMINI_API_KEY,
-  geminiModel: process.env.GEMINI_MODEL || 'gemini-2.0-flash',
-  geminiMock,
+  groqApiKey: process.env.GROQ_API_KEY,
+  groqModel: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile',
+  aiMock,
   aiRateLimit: {
     windowMs: Number(process.env.AI_RATE_LIMIT_WINDOW_MS) || 60000,
     max: Number(process.env.AI_RATE_LIMIT_MAX) || 20

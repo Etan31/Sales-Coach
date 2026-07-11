@@ -1,21 +1,21 @@
 import config from '../config/index.js';
 import logger from '../utils/logger.js';
 import { ApiError, BadGatewayError } from '../utils/errors.js';
-import { getModel } from './client.js';
-import { buildRoleplaySystemPrompt, buildRoleplayContents } from '../prompts/roleplay.js';
-import { buildEvaluationPrompt, EVALUATION_RESPONSE_SCHEMA } from '../prompts/evaluation.js';
+import { createChatCompletion } from './client.js';
+import { buildRoleplaySystemPrompt, buildRoleplayMessages } from '../prompts/roleplay.js';
+import { buildEvaluationPrompt } from '../prompts/evaluation.js';
 
 // Cap history sent to the model so token usage stays bounded.
 const MAX_HISTORY = 40;
 
-// Maps an upstream Gemini failure to a meaningful API error. A 429 (rate limit / quota
+// Maps an upstream AI provider failure to a meaningful API error. A 429 (rate limit / quota
 // exhausted) is passed through as 429 with an actionable message instead of a generic 502.
 function upstreamError(err, action) {
   logger.error({ err }, `${action} failed`);
   if (err && err.status === 429) {
     return new ApiError(
       429,
-      'The AI provider is rate-limited or out of quota. Check your Gemini plan/billing, change GEMINI_MODEL, or set GEMINI_MOCK=1 to run offline.'
+      'The AI provider is rate-limited or out of quota. Check your Groq plan/usage, change GROQ_MODEL, or set AI_MOCK=1 to run offline.'
     );
   }
   return new BadGatewayError(`${action} failed`);
@@ -239,17 +239,15 @@ function normalizeEvaluation(parsed) {
 export async function generateOwnerReply({ profile, messages = [], difficulty, language, contactMethod }) {
   const history = Array.isArray(messages) ? messages : [];
 
-  if (config.geminiMock) {
+  if (config.aiMock) {
     return mockOwnerReply({ language, difficulty, seed: history.length });
   }
 
   const system = buildRoleplaySystemPrompt({ profile, difficulty, language, contactMethod });
-  const contents = buildRoleplayContents(history.slice(-MAX_HISTORY));
-  const model = getModel({ system });
+  const chatMessages = buildRoleplayMessages(history.slice(-MAX_HISTORY));
 
   try {
-    const result = await model.generateContent({ contents });
-    const text = result.response.text().trim();
+    const text = (await createChatCompletion({ system, messages: chatMessages })).trim();
     if (!text) {
       throw new Error('empty model response');
     }
@@ -267,19 +265,19 @@ export async function generateOwnerReply({ profile, messages = [], difficulty, l
 export async function evaluateConversation({ profile, messages = [], language }) {
   const history = Array.isArray(messages) ? messages : [];
 
-  if (config.geminiMock) {
+  if (config.aiMock) {
     return mockEvaluation({ messages: history, language });
   }
 
   const system = buildEvaluationPrompt({ profile, messages: history, language });
-  const model = getModel({ system, json: true, responseSchema: EVALUATION_RESPONSE_SCHEMA });
 
   let raw;
   try {
-    const result = await model.generateContent({
-      contents: [{ role: 'user', parts: [{ text: 'Evaluate the conversation above and return only the JSON scorecard.' }] }]
+    raw = await createChatCompletion({
+      system,
+      messages: [{ role: 'user', content: 'Evaluate the conversation above and return only the JSON scorecard.' }],
+      json: true
     });
-    raw = result.response.text();
   } catch (err) {
     throw upstreamError(err, 'AI evaluation request');
   }

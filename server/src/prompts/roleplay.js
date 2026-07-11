@@ -133,25 +133,17 @@ Remember: you are ${ownerName}. Reply only as ${ownerName} would, in one short, 
 }
 
 /**
- * Map our stored history to Gemini `contents`.
- * owner -> role 'model', seller -> role 'user'. Empty turns are dropped, and any
- * leading owner turns are trimmed so the sequence starts with a 'user' turn (Gemini requires it).
+ * Map our stored history to OpenAI-compatible chat messages (owner -> 'assistant', seller ->
+ * 'user'). The system prompt is sent separately, so this only covers the conversation turns.
  * @param {Array<{role:string, content:string}>} messages
- * @returns {Array<{role:string, parts:Array<{text:string}>}>}
+ * @returns {Array<{role:string, content:string}>}
  */
-export function buildRoleplayContents(messages) {
+export function buildRoleplayMessages(messages) {
   const list = Array.isArray(messages) ? messages : [];
-  const mapped = list
+  return list
     .filter((m) => m && typeof m.content === 'string' && m.content.trim() !== '')
     .map((m) => ({
-      role: m.role === 'owner' ? 'model' : 'user',
-      parts: [{ text: m.content }]
+      role: m.role === 'owner' ? 'assistant' : 'user',
+      content: m.content
     }));
-
-  // Gemini requires the first content to be a 'user' turn.
-  let start = 0;
-  while (start < mapped.length && mapped[start].role === 'model') {
-    start += 1;
-  }
-  return mapped.slice(start);
 }

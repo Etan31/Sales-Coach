@@ -131,7 +131,7 @@ Only the columns contracts.md defines as enums get a `CHECK`, using the value sl
 - `messages.role` -- `owner`, `seller`.
 
 Numeric score columns on `evaluations` (`overall_score`, `rapport`, etc.) are plain `int` with no
-range CHECK -- their valid ranges are an application/scoring concern (Gemini evaluation output),
+range CHECK -- their valid ranges are an application/scoring concern (AI evaluation output),
 not specified as an enum in contracts.md, so no range was invented here.
 
 ## `handle_new_user` trigger

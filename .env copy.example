@@ -12,11 +12,11 @@ SUPABASE_URL=https://YOUR-PROJECT.supabase.co
 SUPABASE_ANON_KEY=your-supabase-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
 
-# Google Gemini
-GEMINI_API_KEY=your-gemini-api-key
-GEMINI_MODEL=gemini-2.0-flash
+# Groq (https://console.groq.com - free tier, no credit card)
+GROQ_API_KEY=your-groq-api-key
+GROQ_MODEL=llama-3.3-70b-versatile
 # Set to 1 to run the app and tests with canned AI responses (no real key needed).
-GEMINI_MOCK=0
+AI_MOCK=0
 
 # Rate limiting for AI endpoints (/api/chat, /api/end-session)
 AI_RATE_LIMIT_WINDOW_MS=60000

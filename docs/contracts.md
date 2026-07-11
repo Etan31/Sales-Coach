@@ -151,15 +151,16 @@ EvaluationObject:
 - `src/index.js` imports `app` and calls `app.listen(config.port)` for local dev.
 - `config/index.js` default-exports a validated config object (loads root `.env` via dotenv):
   `{ nodeEnv, port, corsOrigin, supabaseUrl, supabaseAnonKey, supabaseServiceRoleKey,
-     geminiApiKey, geminiModel, geminiMock (bool), aiRateLimit: { windowMs, max } }`.
+     groqApiKey, groqModel, aiMock (bool), aiRateLimit: { windowMs, max } }`.
 - `middleware/auth.js` `requireAuth`: verify Supabase JWT (admin client `auth.getUser(token)`),
   set `req.user = { id, email }` and `req.supabase` = token-scoped client (RLS enforced). 401 on failure.
 - `database/supabaseClient.js`: `getAdminClient()` (service role, server-only) and
   `getUserClient(accessToken)` (anon key + Authorization header so RLS applies).
-- `gemini/geminiService.js` exports:
+- `ai/aiService.js` exports (backed by Groq's OpenAI-compatible chat completions API via
+  `ai/client.js`):
   - `generateOwnerReply({ profile, messages, difficulty, language, contactMethod }) -> string`
   - `evaluateConversation({ profile, messages, language }) -> EvaluationObject (minus id/sessionId/createdAt)`
-  Both honor `config.geminiMock` (return canned data, no network). `messages` are `{ role, content }`.
+  Both honor `config.aiMock` (return canned data, no network). `messages` are `{ role, content }`.
 - `services/profileGenerator.js` `generateBusinessProfile(businessType, difficulty) -> business_profile jsonb`
   (randomized within the seed archetype for that businessType; harder difficulty -> lower budget / more
   objections / more skeptical personality).

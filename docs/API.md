@@ -118,11 +118,11 @@ Errors: 400 (malformed id), 401 (unauthenticated), 404 (not found / not owned by
 Auth: Required (Supabase JWT), rate-limited
 Body: { "sessionId", "message" } (message: 1..2000 chars)
 Response: 200 { "message": <MessageObject with role "owner"> }
-Errors: 400 (invalid body / message length), 401 (unauthenticated), 404 (session not found), 409 (session not active), 429 (rate limited), 500 (server error), 502 (Gemini upstream failure)
+Errors: 400 (invalid body / message length), 401 (unauthenticated), 404 (session not found), 409 (session not active), 429 (rate limited / AI provider quota exhausted), 500 (server error), 502 (AI upstream failure)
 ```
 
-Persists the seller's message, calls `gemini/geminiService.js#generateOwnerReply` (mocked when
-`GEMINI_MOCK=1`), persists and returns the generated `owner` reply. Rate-limited per
+Persists the seller's message, calls `ai/aiService.js#generateOwnerReply` (mocked when
+`AI_MOCK=1`), persists and returns the generated `owner` reply. Rate-limited per
 `config.aiRateLimit` (`AI_RATE_LIMIT_WINDOW_MS` / `AI_RATE_LIMIT_MAX`).
 
 ### POST /api/end-session
@@ -131,10 +131,10 @@ Persists the seller's message, calls `gemini/geminiService.js#generateOwnerReply
 Auth: Required (Supabase JWT), rate-limited
 Body: { "sessionId" }
 Response: 200 { "evaluation": <EvaluationObject> }
-Errors: 400 (invalid body), 401 (unauthenticated), 404 (not found), 409 (already completed / no messages to evaluate), 429 (rate limited), 500 (server error), 502 (Gemini upstream failure)
+Errors: 400 (invalid body), 401 (unauthenticated), 404 (not found), 409 (already completed / no messages to evaluate), 429 (rate limited / AI provider quota exhausted), 500 (server error), 502 (AI upstream failure)
 ```
 
-Calls `gemini/geminiService.js#evaluateConversation` (mocked when `GEMINI_MOCK=1`), writes the
+Calls `ai/aiService.js#evaluateConversation` (mocked when `AI_MOCK=1`), writes the
 `evaluations` row, and sets `practice_sessions.status = 'completed'` and `ended_at = now()`.
 
 ### GET /api/history?page=1&pageSize=20

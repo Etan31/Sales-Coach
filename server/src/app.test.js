@@ -2,7 +2,7 @@ import request from 'supertest';
 import app from './app.js';
 
 // Exercises the fully assembled Express app (routing + middleware + error envelope).
-// No Supabase/Gemini network calls: config + Gemini are mocked via jest.setup.js, and the
+// No Supabase/AI network calls: config + the AI provider are mocked via jest.setup.js, and the
 // protected-route check rejects before touching Supabase when no bearer token is present.
 describe('API integration', () => {
   it('GET /api/health -> 200 with the ok envelope', async () => {
