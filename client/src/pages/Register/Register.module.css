@@ -4,12 +4,16 @@
   align-items: center;
   justify-content: center;
   padding: var(--sc-space-5);
-  background: var(--sc-bg);
+  background:
+    radial-gradient(60% 55% at 15% 0%, rgba(5, 150, 105, 0.1), transparent 60%),
+    radial-gradient(50% 50% at 100% 100%, rgba(13, 148, 136, 0.08), transparent 55%),
+    var(--sc-bg);
 }
 
 .card {
   width: 100%;
   max-width: 400px;
+  box-shadow: var(--sc-shadow);
 }
 
 .brand {
@@ -20,7 +24,9 @@
 }
 
 .brandName {
+  font-family: var(--sc-font-display);
   font-weight: var(--sc-fw-semibold);
+  letter-spacing: var(--sc-tracking-tight);
   color: var(--sc-text);
 }
 
@@ -53,7 +59,7 @@
 .field {
   display: flex;
   flex-direction: column;
-  gap: var(--sc-space-1);
+  gap: var(--sc-space-2);
 }
 
 .label {
@@ -63,17 +69,23 @@
 }
 
 .input {
-  padding: var(--sc-space-2) var(--sc-space-3);
+  padding: 10px var(--sc-space-3);
   border: 1px solid var(--sc-border);
   border-radius: var(--sc-radius);
   background: var(--sc-surface);
   color: var(--sc-text);
   font-size: var(--sc-fs-md);
+  transition: border-color var(--sc-transition), box-shadow var(--sc-transition);
 }
 
-.input:focus {
-  outline: 2px solid var(--sc-primary);
-  outline-offset: 1px;
+.input:hover {
+  border-color: var(--sc-border-strong);
+}
+
+.input:focus-visible {
+  outline: none;
+  border-color: var(--sc-primary);
+  box-shadow: var(--sc-ring);
 }
 
 .submit {

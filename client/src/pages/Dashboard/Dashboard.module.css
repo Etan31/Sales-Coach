@@ -63,6 +63,13 @@
   display: flex;
   flex-direction: column;
   gap: var(--sc-space-3);
+  transition: border-color var(--sc-transition), box-shadow var(--sc-transition), transform var(--sc-transition);
+}
+
+.sessionCard:hover {
+  border-color: var(--sc-border-strong);
+  box-shadow: var(--sc-shadow);
+  transform: translateY(-1px);
 }
 
 .sessionInfo {
@@ -98,8 +105,8 @@
 }
 
 .badge_active {
-  background: var(--sc-primary-soft);
-  color: var(--sc-primary);
+  background: var(--sc-info-soft);
+  color: var(--sc-info);
 }
 
 .badge_completed {
@@ -113,7 +120,9 @@
 }
 
 .score {
+  font-family: var(--sc-font-display);
   font-weight: var(--sc-fw-semibold);
+  font-variant-numeric: tabular-nums;
   color: var(--sc-text);
 }
 

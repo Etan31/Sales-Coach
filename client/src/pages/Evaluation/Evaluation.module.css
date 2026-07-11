@@ -26,29 +26,37 @@
   flex-direction: column;
   align-items: center;
   gap: var(--sc-space-2);
-  padding: var(--sc-space-6);
+  padding: var(--sc-space-7) var(--sc-space-6);
   border-width: 2px;
+  box-shadow: var(--sc-shadow);
 }
 
 .heroLabel {
-  font-size: var(--sc-fs-sm);
+  font-size: var(--sc-fs-xs);
   color: var(--sc-text-muted);
-  font-weight: var(--sc-fw-medium);
+  font-weight: var(--sc-fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--sc-tracking-wide);
 }
 
 .heroScoreRow {
   display: flex;
   align-items: baseline;
-  gap: var(--sc-space-2);
+  gap: var(--sc-space-1);
 }
 
 .heroScore {
+  font-family: var(--sc-font-display);
   font-size: var(--sc-fs-3xl);
   font-weight: var(--sc-fw-bold);
+  letter-spacing: var(--sc-tracking-tight);
+  font-variant-numeric: tabular-nums;
   color: var(--sc-text);
+  line-height: 1;
 }
 
 .heroMax {
+  font-family: var(--sc-font-display);
   font-size: var(--sc-fs-lg);
   color: var(--sc-text-muted);
 }

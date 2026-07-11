@@ -10,10 +10,11 @@
   display: flex;
   flex-direction: column;
   gap: var(--sc-space-4);
-  padding: var(--sc-space-4);
+  padding: var(--sc-space-5);
   background: var(--sc-surface);
   border: 1px solid var(--sc-border);
   border-radius: var(--sc-radius-lg);
+  box-shadow: var(--sc-shadow-sm);
 }
 
 .sidebarHeader {
@@ -88,6 +89,7 @@
   border: 1px solid var(--sc-border);
   border-radius: var(--sc-radius-lg);
   padding: var(--sc-space-4);
+  box-shadow: var(--sc-shadow-sm);
 }
 
 .messages {
@@ -131,17 +133,23 @@
 
 .input {
   flex: 1;
-  padding: var(--sc-space-2) var(--sc-space-3);
+  padding: 10px var(--sc-space-3);
   border: 1px solid var(--sc-border);
   border-radius: var(--sc-radius);
   background: var(--sc-surface);
   color: var(--sc-text);
   font-size: var(--sc-fs-md);
+  transition: border-color var(--sc-transition), box-shadow var(--sc-transition);
 }
 
-.input:focus {
-  outline: 2px solid var(--sc-primary);
-  outline-offset: 1px;
+.input:hover {
+  border-color: var(--sc-border-strong);
+}
+
+.input:focus-visible {
+  outline: none;
+  border-color: var(--sc-primary);
+  box-shadow: var(--sc-ring);
 }
 
 .modalText {

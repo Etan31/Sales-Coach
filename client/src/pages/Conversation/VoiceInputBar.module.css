@@ -32,12 +32,23 @@
   background: var(--sc-primary);
   color: var(--sc-primary-contrast);
   cursor: pointer;
-  box-shadow: var(--sc-shadow);
-  transition: background-color var(--sc-transition), transform var(--sc-transition), opacity var(--sc-transition);
+  box-shadow: 0 10px 24px -8px rgba(5, 150, 105, 0.55);
+  transition: background-color var(--sc-transition), transform var(--sc-transition), box-shadow var(--sc-transition),
+    opacity var(--sc-transition);
 }
 
 .micButton:hover:not(:disabled) {
   background: var(--sc-primary-hover);
+  transform: translateY(-1px);
+}
+
+.micButton:active:not(:disabled) {
+  transform: translateY(0) scale(0.97);
+}
+
+.micButton:focus-visible {
+  outline: none;
+  box-shadow: var(--sc-ring), 0 10px 24px -8px rgba(5, 150, 105, 0.55);
 }
 
 .micButton:disabled {
@@ -47,6 +58,7 @@
 
 .micButton.listening {
   background: var(--sc-danger);
+  box-shadow: 0 10px 24px -8px rgba(220, 38, 38, 0.55);
 }
 
 .micIcon {
@@ -121,17 +133,23 @@
 
 .typeInput {
   flex: 1;
-  padding: var(--sc-space-2) var(--sc-space-3);
+  padding: 10px var(--sc-space-3);
   border: 1px solid var(--sc-border);
   border-radius: var(--sc-radius);
   background: var(--sc-surface);
   color: var(--sc-text);
   font-size: var(--sc-fs-md);
+  transition: border-color var(--sc-transition), box-shadow var(--sc-transition);
 }
 
-.typeInput:focus {
-  outline: 2px solid var(--sc-primary);
-  outline-offset: 1px;
+.typeInput:hover {
+  border-color: var(--sc-border-strong);
+}
+
+.typeInput:focus-visible {
+  outline: none;
+  border-color: var(--sc-primary);
+  box-shadow: var(--sc-ring);
 }
 
 @media (min-width: 800px) {
