@@ -68,7 +68,7 @@ Sales_Coach/
 
 ## Prerequisites
 
-- Node.js >= 20
+- Node.js >= 22.13
 - pnpm (version pinned via the root `package.json` `packageManager` field)
 - A [Supabase](https://supabase.com) project (Postgres + Auth) — or skip Gemini setup entirely
   and still exercise the DB layer against a real Supabase project

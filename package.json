@@ -5,7 +5,7 @@
   "type": "module",
   "description": "AI Sales Coach - practice selling websites to AI-roleplayed small business owners.",
   "engines": {
-    "node": ">=20"
+    "node": ">=22.13"
   },
   "packageManager": "pnpm@11.0.9",
   "scripts": {
