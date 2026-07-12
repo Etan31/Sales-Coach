@@ -13,8 +13,8 @@ export default function errorHandler(err, req, res, next) { // eslint-disable-li
 
   logger.error({ err, status, path: req.originalUrl }, err.message);
 
-  const message =
-    isServerError && config.nodeEnv === 'production' ? 'Internal server error' : err.message;
+  // TEMP: production redaction disabled for deploy debugging - revert once the 500 is fixed.
+  const message = err.message;
 
   res.status(status).json(buildEnvelope(status, message));
 }
