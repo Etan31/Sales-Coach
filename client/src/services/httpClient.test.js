@@ -1,4 +1,4 @@
-import { resolveBaseUrl } from "./httpClient.js";
+import { resolveBaseUrl } from "./apiBaseUrl.js";
 
 describe("resolveBaseUrl", () => {
   it("falls back to the current origin when no API base URL is configured", () => {
