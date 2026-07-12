@@ -22,7 +22,7 @@ async function getAuthHeader() {
 function buildUrl(path, params) {
   const normalizedBaseUrl = BASE_URL.replace(/\/+$/, "");
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-  const url = new URL(`${normalizedBaseUrl}${normalizedPath}`);
+  const url = new URL(`${normalizedBaseUrl}${normalizedPath}`, window.location.origin);
   if (params) {
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== null)
