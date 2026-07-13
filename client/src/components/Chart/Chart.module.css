@@ -24,6 +24,13 @@
   fill: var(--sc-accent);
 }
 
+.tick {
+  fill: var(--sc-text-muted);
+  font-family: var(--sc-font-sans);
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+}
+
 .empty {
   color: var(--sc-text-faint);
   font-size: var(--sc-fs-sm);
