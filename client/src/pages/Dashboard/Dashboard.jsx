@@ -9,6 +9,7 @@ import { isAuthErrorCode, toErrorPageCode } from "../../utils/apiError.js";
 import Button from "../../components/Button/Button.jsx";
 import Card from "../../components/Card/Card.jsx";
 import StatCard from "../../components/StatCard/StatCard.jsx";
+import ScoreCard from "../../components/ScoreCard/ScoreCard.jsx";
 import Chart from "../../components/Chart/Chart.jsx";
 import Spinner from "../../components/Spinner/Spinner.jsx";
 import Modal from "../../components/Modal/Modal.jsx";
@@ -18,6 +19,7 @@ import {
   getTranscripts,
   clearTranscripts,
 } from "../../services/localTranscripts.js";
+import { SKILLS, SKILL_MAX } from "../../utils/score.js";
 import styles from "./Dashboard.module.css";
 
 const TRANSCRIPT_DIVIDER = `\n\n${"=".repeat(40)}\n\n`;
@@ -110,6 +112,12 @@ function Dashboard() {
     }));
   }, [stats]);
 
+  // /api/statistics already returns per-skill averages; nothing extra to fetch.
+  const skillAverages = stats?.skillAverages;
+  const hasSkillAverages =
+    Boolean(skillAverages) &&
+    SKILLS.some((skill) => Number.isFinite(skillAverages[skill.key]));
+
   const [transcripts, setTranscripts] = useState([]);
   const [confirmClearOpen, setConfirmClearOpen] = useState(false);
   const [viewingTranscript, setViewingTranscript] = useState(null);
@@ -153,7 +161,13 @@ function Dashboard() {
     setConfirmClearOpen(false);
   }
 
-  if (loading) return <Spinner label="Loading your dashboard..." />;
+  if (loading) {
+    return (
+      <div className={styles.loading}>
+        <Spinner label="Loading your dashboard..." />
+      </div>
+    );
+  }
 
   if (error) {
     const code = toErrorPageCode(error);
@@ -188,6 +202,28 @@ function Dashboard() {
           hint="out of 100"
         />
       </div>
+
+      {hasSkillAverages && (
+        <Card className={styles.skillsCard}>
+          <div>
+            <h2 className={styles.sectionTitle}>Skill Breakdown</h2>
+            <p className={styles.sectionHint}>
+              Your average across every completed session.
+            </p>
+          </div>
+          <div className={styles.skillGrid}>
+            {SKILLS.map((skill) => (
+              <ScoreCard
+                key={skill.key}
+                label={skill.label}
+                score={skillAverages[skill.key] ?? 0}
+                max={SKILL_MAX}
+                flush
+              />
+            ))}
+          </div>
+        </Card>
+      )}
 
       {trendData.length > 0 && (
         <Card className={styles.trendCard}>

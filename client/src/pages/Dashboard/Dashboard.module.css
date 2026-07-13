@@ -1,3 +1,9 @@
+.loading {
+  display: grid;
+  place-items: center;
+  min-height: 50vh;
+}
+
 .page {
   display: flex;
   flex-direction: column;
@@ -33,9 +39,27 @@
   gap: var(--sc-space-3);
 }
 
+.skillsCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-space-5);
+}
+
+.skillGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sc-space-5) var(--sc-space-6);
+}
+
 .sectionTitle {
   font-size: var(--sc-fs-lg);
   margin-bottom: var(--sc-space-3);
+}
+
+.sectionHint {
+  margin: calc(var(--sc-space-3) * -1) 0 0;
+  font-size: var(--sc-fs-sm);
+  color: var(--sc-text-muted);
 }
 
 .emptyCard {
@@ -200,6 +224,10 @@
 
   .statsRow {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  .skillGrid {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .sessionCard {
