@@ -12,3 +12,11 @@ pnpm-debug.log*
 playwright-report/
 test-results/
 .turbo/
+
+# impeccable (design-lint skill) auto-installs itself into every AI harness it
+# detects in the repo. This project uses Claude Code (.claude/skills/impeccable
+# is committed); the Codex CLI and GitHub Copilot copies are unused scaffolding.
+.agents/skills/impeccable/
+.codex/
+.github/hooks/
+.github/skills/
