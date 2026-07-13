@@ -19,11 +19,12 @@ import {
   getTranscripts,
   clearTranscripts,
 } from "../../services/localTranscripts.js";
-import { SKILLS, SKILL_MAX } from "../../utils/score.js";
+import { SKILLS, SKILL_MAX, getScoreBand } from "../../utils/score.js";
 import styles from "./Dashboard.module.css";
 
 const TRANSCRIPT_DIVIDER = `\n\n${"=".repeat(40)}\n\n`;
 const RECENT_TRANSCRIPT_LIMIT = 5;
+const SESSIONS_PAGE_SIZE = 20;
 
 // Static enum -> label maps (docs/contracts.md); Dashboard does not fetch /config.
 const BUSINESS_LABELS = {
@@ -76,6 +77,8 @@ function Dashboard() {
   const [history, setHistory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sessionsPage, setSessionsPage] = useState(1);
+  const [sessionsPageLoading, setSessionsPageLoading] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -86,7 +89,7 @@ function Dashboard() {
       try {
         const [statsResult, historyResult] = await Promise.all([
           statsApi.get(),
-          sessionApi.history({ page: 1, pageSize: 20 }),
+          sessionApi.history({ page: 1, pageSize: SESSIONS_PAGE_SIZE }),
         ]);
         if (!isMounted) return;
         setStats(statsResult);
@@ -104,6 +107,21 @@ function Dashboard() {
     };
   }, []);
 
+  // Stats never changes with the session-history page, so paging only refetches
+  // history and only shows a scoped loading state, not the full-page spinner.
+  async function goToSessionsPage(nextPage) {
+    setSessionsPageLoading(true);
+    try {
+      const result = await sessionApi.history({ page: nextPage, pageSize: SESSIONS_PAGE_SIZE });
+      setHistory(result);
+      setSessionsPage(nextPage);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setSessionsPageLoading(false);
+    }
+  }
+
   const trendData = useMemo(() => {
     const trend = stats?.scoreTrend ?? [];
     return trend.map((point) => ({
@@ -111,6 +129,19 @@ function Dashboard() {
       value: point.overallScore,
     }));
   }, [stats]);
+
+  const trendAriaLabel = useMemo(() => {
+    if (trendData.length === 0) return "";
+    const scores = trendData.map((point) => point.value);
+    const min = Math.min(...scores);
+    const max = Math.max(...scores);
+    if (trendData.length === 1) {
+      return `Score trend: 1 session on ${trendData[0].label}, scored ${scores[0]} out of 100.`;
+    }
+    const first = trendData[0].label;
+    const last = trendData[trendData.length - 1].label;
+    return `Score trend across ${trendData.length} sessions from ${first} to ${last}, ranging ${min} to ${max} out of 100.`;
+  }, [trendData]);
 
   // /api/statistics already returns per-skill averages; nothing extra to fetch.
   const skillAverages = stats?.skillAverages;
@@ -180,6 +211,10 @@ function Dashboard() {
   }
 
   const sessions = history?.sessions ?? [];
+  const totalSessions = history?.total ?? sessions.length;
+  const totalSessionsPages = Math.max(1, Math.ceil(totalSessions / SESSIONS_PAGE_SIZE));
+  const sessionsRangeStart = totalSessions === 0 ? 0 : (sessionsPage - 1) * SESSIONS_PAGE_SIZE + 1;
+  const sessionsRangeEnd = Math.min(sessionsPage * SESSIONS_PAGE_SIZE, totalSessions);
 
   return (
     <div className={styles.page}>
@@ -200,6 +235,7 @@ function Dashboard() {
           label="Average Score"
           value={stats?.averageScore ?? 0}
           hint="out of 100"
+          band={stats?.averageScore != null ? getScoreBand(stats.averageScore, 100) : undefined}
         />
       </div>
 
@@ -228,7 +264,7 @@ function Dashboard() {
       {trendData.length > 0 && (
         <Card className={styles.trendCard}>
           <h2 className={styles.sectionTitle}>Score Trend</h2>
-          <Chart type="line" data={trendData} max={100} />
+          <Chart type="line" data={trendData} max={100} ariaLabel={trendAriaLabel} />
         </Card>
       )}
 
@@ -268,7 +304,9 @@ function Dashboard() {
                     </span>
                     {item.status === "completed" &&
                       item.overallScore !== null && (
-                        <span className={styles.score}>
+                        <span
+                          className={`${styles.score} ${styles[`score_${getScoreBand(item.overallScore, 100)}`] ?? ""}`}
+                        >
                           {item.overallScore}/100
                         </span>
                       )}
@@ -293,6 +331,34 @@ function Dashboard() {
               </li>
             ))}
           </ul>
+        )}
+
+        {totalSessionsPages > 1 && (
+          <div className={styles.pagination}>
+            <span className={styles.paginationCount}>
+              {sessionsPageLoading ? (
+                <Spinner size="sm" label="Loading sessions..." />
+              ) : (
+                `Showing ${sessionsRangeStart}-${sessionsRangeEnd} of ${totalSessions}`
+              )}
+            </span>
+            <div className={styles.paginationActions}>
+              <Button
+                variant="secondary"
+                disabled={sessionsPage <= 1 || sessionsPageLoading}
+                onClick={() => goToSessionsPage(sessionsPage - 1)}
+              >
+                Previous
+              </Button>
+              <Button
+                variant="secondary"
+                disabled={sessionsPage >= totalSessionsPages || sessionsPageLoading}
+                onClick={() => goToSessionsPage(sessionsPage + 1)}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
         )}
       </section>
 

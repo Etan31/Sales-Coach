@@ -150,9 +150,41 @@
   color: var(--sc-text);
 }
 
+.score_good {
+  color: var(--sc-success);
+}
+
+.score_fair {
+  color: var(--sc-warning);
+}
+
+.score_poor {
+  color: var(--sc-danger);
+}
+
 .sessionLink {
   margin-left: auto;
   font-weight: var(--sc-fw-semibold);
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-space-3);
+  margin-top: var(--sc-space-4);
+}
+
+.paginationCount {
+  display: flex;
+  align-items: center;
+  font-size: var(--sc-fs-sm);
+  color: var(--sc-text-muted);
+}
+
+.paginationActions {
+  display: flex;
+  gap: var(--sc-space-2);
 }
 
 .transcriptsCard {
