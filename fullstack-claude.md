@@ -93,26 +93,6 @@ For each project record:
 | 503 | Service Unavailable | Maintenance mode (graceful shutdown) |
 | 504 | Gateway Timeout | Request timeout (API response timeout) |
 
-**Rendering patterns:**
-
-404 (auto-routed):
-```jsx
-// Navigate to any non-existent route -> catch-all renders NotFound
-```
-
-401/403 (inline in components):
-```jsx
-if (!session) return <AuthError code={401} />
-if (!permissions.includes('admin')) return <AuthError code={403} />
-```
-
-500/502/503/504 (error boundaries or API handlers):
-```jsx
-catch (error) {
-  if (error.status === 503) return <ServerError code={503} />
-  return <ServerError code={500} /> // fallback
-}
-```
 
 ### Logo & Favicon
 
