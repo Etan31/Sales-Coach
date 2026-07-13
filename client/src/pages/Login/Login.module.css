@@ -1,53 +1,238 @@
+.loading {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+}
+
 .page {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--sc-space-5);
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+/* ---------- Left: the scrolling story ---------- */
+
+.story {
+  container-type: inline-size;
+  padding: var(--sc-space-6) var(--sc-space-5) var(--sc-space-8);
   background:
     radial-gradient(60% 55% at 15% 0%, rgba(5, 150, 105, 0.1), transparent 60%),
     radial-gradient(50% 50% at 100% 100%, rgba(13, 148, 136, 0.08), transparent 55%),
     var(--sc-bg);
 }
 
-.card {
-  width: 100%;
-  max-width: 400px;
-  box-shadow: var(--sc-shadow);
+/* Below the split the story sits under the form, so the lockup moves into the form pane. */
+.brand {
+  display: none;
+  align-items: center;
+  gap: var(--sc-space-2);
+  margin-bottom: var(--sc-space-7);
+  animation: sc-story-in 420ms var(--sc-ease-out) both;
 }
 
-.brand {
+.authBrand {
   display: inline-flex;
   align-items: center;
   gap: var(--sc-space-2);
-  margin-bottom: var(--sc-space-5);
+  margin-bottom: var(--sc-space-6);
 }
 
 .brandName {
   font-family: var(--sc-font-display);
+  font-size: var(--sc-fs-lg);
   font-weight: var(--sc-fw-semibold);
   letter-spacing: var(--sc-tracking-tight);
   color: var(--sc-text);
 }
 
-.title {
-  font-size: var(--sc-fs-xl);
+.headline {
+  max-width: 24ch;
+  margin: 0 0 var(--sc-space-4);
+  font-size: clamp(var(--sc-fs-2xl), 4vw, var(--sc-fs-3xl));
+  letter-spacing: var(--sc-tracking-tighter);
+  text-wrap: balance;
+  color: var(--sc-text);
+  animation: sc-story-in 420ms var(--sc-ease-out) 60ms both;
+}
+
+.lede {
+  max-width: 52ch;
+  margin: 0 0 var(--sc-space-8);
+  font-size: var(--sc-fs-lg);
+  color: var(--sc-text-muted);
+  text-wrap: pretty;
+  animation: sc-story-in 420ms var(--sc-ease-out) 120ms both;
+}
+
+/* ---------- Feature rows ---------- */
+
+.features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-space-8);
+}
+
+.feature {
+  display: grid;
+  gap: var(--sc-space-4);
+  animation: sc-story-in 420ms var(--sc-ease-out) both;
+  animation-delay: calc(180ms + var(--sc-feature-index) * 90ms);
+}
+
+.featureIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: var(--sc-space-3);
+  border: 1px solid var(--sc-primary-soft-border);
+  border-radius: var(--sc-radius);
+  background: var(--sc-primary-soft);
+  color: var(--sc-primary);
+}
+
+.featureTitle {
+  margin: 0 0 var(--sc-space-2);
+  font-size: var(--sc-fs-lg);
+  color: var(--sc-text);
+}
+
+.featureBody {
+  margin: 0;
+  max-width: 44ch;
+  font-size: var(--sc-fs-sm);
+  color: var(--sc-text-muted);
+  text-wrap: pretty;
+}
+
+.featureVisual {
+  padding: var(--sc-space-4);
+  border: 1px solid var(--sc-border);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-surface);
+  box-shadow: var(--sc-shadow-sm);
+  transition:
+    border-color var(--sc-transition),
+    box-shadow var(--sc-transition),
+    transform var(--sc-transition);
+}
+
+.featureVisual:hover {
+  border-color: var(--sc-border-strong);
+  box-shadow: var(--sc-shadow);
+  transform: translateY(-1px);
+}
+
+.featureVisual > :last-child {
+  margin-bottom: 0;
+}
+
+/*
+ * Side-by-side once the story column itself is wide enough, not the viewport:
+ * that column is still narrow on a laptop even though the page is not.
+ */
+@container (min-width: 620px) {
+  .feature {
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: var(--sc-space-6);
+  }
+
+  .feature:nth-child(even) .featureText {
+    order: 2;
+  }
+}
+
+/* ---------- Feature visuals ---------- */
+
+.scoreVisual {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-space-4);
+}
+
+.scoreBars {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--sc-space-3);
+}
+
+.rewrite {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-space-2);
+}
+
+.rewriteLine {
+  margin: 0;
+  padding: var(--sc-space-3);
+  border-radius: var(--sc-radius);
+  background: var(--sc-surface-2);
+  font-size: var(--sc-fs-sm);
+  color: var(--sc-text-muted);
+}
+
+.rewriteBetter {
+  border: 1px solid var(--sc-primary-soft-border);
+  background: var(--sc-primary-soft);
+  color: var(--sc-text);
+}
+
+.rewriteLabel {
+  display: block;
   margin-bottom: var(--sc-space-1);
+  font-size: var(--sc-fs-xs);
+  font-weight: var(--sc-fw-semibold);
+  color: var(--sc-text-faint);
+}
+
+.rewriteBetter .rewriteLabel {
+  color: var(--sc-primary);
+}
+
+/* ---------- Right: the sign-in pane ---------- */
+
+.authPane {
+  /* Above the story on small screens. The story has no focusable content, so tab order is unaffected. */
+  order: -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sc-space-7) var(--sc-space-5);
+  background: var(--sc-surface);
+  border-bottom: 1px solid var(--sc-border);
+}
+
+.authInner {
+  width: 100%;
+  max-width: 380px;
+  animation: sc-story-in 420ms var(--sc-ease-out) both;
+}
+
+.title {
+  margin: 0 0 var(--sc-space-1);
+  font-size: var(--sc-fs-xl);
 }
 
 .subtitle {
-  color: var(--sc-text-muted);
+  margin: 0 0 var(--sc-space-6);
   font-size: var(--sc-fs-sm);
-  margin-bottom: var(--sc-space-5);
+  color: var(--sc-text-muted);
 }
 
 .error {
-  background: var(--sc-danger-soft);
-  color: var(--sc-danger);
+  margin: 0 0 var(--sc-space-4);
   padding: var(--sc-space-3);
   border-radius: var(--sc-radius);
+  background: var(--sc-danger-soft);
+  color: var(--sc-danger);
   font-size: var(--sc-fs-sm);
-  margin-bottom: var(--sc-space-4);
 }
 
 .form {
@@ -69,13 +254,15 @@
 }
 
 .input {
-  padding: 10px var(--sc-space-3);
+  padding: var(--sc-space-3);
   border: 1px solid var(--sc-border);
   border-radius: var(--sc-radius);
   background: var(--sc-surface);
   color: var(--sc-text);
   font-size: var(--sc-fs-md);
-  transition: border-color var(--sc-transition), box-shadow var(--sc-transition);
+  transition:
+    border-color var(--sc-transition),
+    box-shadow var(--sc-transition);
 }
 
 .input:hover {
@@ -94,8 +281,48 @@
 }
 
 .footer {
-  margin: var(--sc-space-4) 0 0;
+  margin: var(--sc-space-5) 0 0;
   text-align: center;
   font-size: var(--sc-fs-sm);
   color: var(--sc-text-muted);
+}
+
+/* ---------- Split ---------- */
+
+@media (min-width: 960px) {
+  .page {
+    grid-template-columns: minmax(0, 1fr) minmax(400px, 480px);
+  }
+
+  .story {
+    padding: var(--sc-space-8) var(--sc-space-7);
+  }
+
+  /* The story leads again, so the lockup goes back to it and out of the form pane. */
+  .brand {
+    display: inline-flex;
+  }
+
+  .authBrand {
+    display: none;
+  }
+
+  .authPane {
+    /* The story scrolls past; the form stays put. */
+    position: sticky;
+    top: 0;
+    order: 0;
+    align-self: start;
+    min-height: 100dvh;
+    padding: var(--sc-space-7);
+    border-bottom: 0;
+    border-left: 1px solid var(--sc-border);
+  }
+}
+
+@keyframes sc-story-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
 }
