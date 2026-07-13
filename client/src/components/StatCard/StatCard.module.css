@@ -29,3 +29,15 @@
   font-size: var(--sc-fs-xs);
   color: var(--sc-text-faint);
 }
+
+.good {
+  color: var(--sc-success);
+}
+
+.fair {
+  color: var(--sc-warning);
+}
+
+.poor {
+  color: var(--sc-danger);
+}
