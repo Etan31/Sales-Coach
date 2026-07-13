@@ -8,7 +8,7 @@ import Card from '../../components/Card/Card.jsx';
 import ScoreCard from '../../components/ScoreCard/ScoreCard.jsx';
 import ScoreDial from '../../components/ScoreDial/ScoreDial.jsx';
 import Accordion from '../../components/Accordion/Accordion.jsx';
-import Spinner from '../../components/Spinner/Spinner.jsx';
+import { EvaluationSkeleton } from '../../components/Skeleton/Skeleton.jsx';
 import TranscriptModal from '../../components/TranscriptModal/TranscriptModal.jsx';
 import { formatTranscript, downloadTextFile } from '../../utils/transcript.js';
 import { saveTranscript } from '../../services/localTranscripts.js';
@@ -155,13 +155,7 @@ function Evaluation() {
     ];
   }, [evaluation]);
 
-  if (loading) {
-    return (
-      <div className={styles.loading}>
-        <Spinner label="Loading your evaluation..." />
-      </div>
-    );
-  }
+  if (loading) return <EvaluationSkeleton />;
 
   if (loadError) {
     const code = toErrorPageCode(loadError);

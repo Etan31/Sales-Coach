@@ -12,6 +12,7 @@ import StatCard from "../../components/StatCard/StatCard.jsx";
 import ScoreCard from "../../components/ScoreCard/ScoreCard.jsx";
 import Chart from "../../components/Chart/Chart.jsx";
 import Spinner from "../../components/Spinner/Spinner.jsx";
+import { DashboardSkeleton } from "../../components/Skeleton/Skeleton.jsx";
 import Modal from "../../components/Modal/Modal.jsx";
 import TranscriptModal from "../../components/TranscriptModal/TranscriptModal.jsx";
 import { downloadTextFile } from "../../utils/transcript.js";
@@ -20,6 +21,11 @@ import {
   clearTranscripts,
 } from "../../services/localTranscripts.js";
 import { SKILLS, SKILL_MAX, getScoreBand } from "../../utils/score.js";
+import {
+  preloadConversation,
+  preloadPracticeSetup,
+  preloadSessionResult,
+} from "../../services/preload.js";
 import styles from "./Dashboard.module.css";
 
 const TRANSCRIPT_DIVIDER = `\n\n${"=".repeat(40)}\n\n`;
@@ -192,13 +198,7 @@ function Dashboard() {
     setConfirmClearOpen(false);
   }
 
-  if (loading) {
-    return (
-      <div className={styles.loading}>
-        <Spinner label="Loading your dashboard..." />
-      </div>
-    );
-  }
+  if (loading) return <DashboardSkeleton />;
 
   if (error) {
     const code = toErrorPageCode(error);
@@ -225,7 +225,13 @@ function Dashboard() {
             Track your practice sessions and skill progress.
           </p>
         </div>
-        <Button onClick={() => navigate("/practice/new")}>New Practice</Button>
+        <Button
+          onMouseEnter={preloadPracticeSetup}
+          onFocus={preloadPracticeSetup}
+          onClick={() => navigate("/practice/new")}
+        >
+          New Practice
+        </Button>
       </div>
 
       <div className={styles.statsRow}>
@@ -314,6 +320,8 @@ function Dashboard() {
                       <Link
                         to={`/session/${item.id}/evaluation`}
                         className={styles.sessionLink}
+                        onMouseEnter={() => preloadSessionResult(item.id)}
+                        onFocus={() => preloadSessionResult(item.id)}
                       >
                         View results
                       </Link>
@@ -322,6 +330,8 @@ function Dashboard() {
                       <Link
                         to={`/session/${item.id}`}
                         className={styles.sessionLink}
+                        onMouseEnter={() => preloadConversation(item.id)}
+                        onFocus={() => preloadConversation(item.id)}
                       >
                         Continue
                       </Link>

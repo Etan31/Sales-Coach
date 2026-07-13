@@ -6,7 +6,8 @@ import { isAuthErrorCode, toErrorPageCode } from '../../utils/apiError.js';
 import Button from '../../components/Button/Button.jsx';
 import Card from '../../components/Card/Card.jsx';
 import SelectField from '../../components/SelectField/SelectField.jsx';
-import Spinner from '../../components/Spinner/Spinner.jsx';
+import { PracticeSetupSkeleton } from '../../components/Skeleton/Skeleton.jsx';
+import { preloadConversation } from '../../services/preload.js';
 import styles from './PracticeSetup.module.css';
 
 /** Practice configuration screen: pick business type, difficulty, contact method, language, then start. */
@@ -67,6 +68,7 @@ function PracticeSetup() {
       setCreating(true);
       try {
         const { session } = await sessionApi.create(selection);
+        preloadConversation(session.id);
         navigate(`/session/${session.id}`);
       } catch (err) {
         setCreateError(err?.message || 'Unable to start practice. Please try again.');
@@ -76,7 +78,7 @@ function PracticeSetup() {
     [selection, navigate]
   );
 
-  if (loading) return <Spinner label="Loading practice options..." />;
+  if (loading) return <PracticeSetupSkeleton />;
 
   if (loadError) {
     const code = toErrorPageCode(loadError);

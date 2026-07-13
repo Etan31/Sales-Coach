@@ -9,9 +9,10 @@ import ChatBubble from '../../components/ChatBubble/ChatBubble.jsx';
 import TypingIndicator from '../../components/TypingIndicator/TypingIndicator.jsx';
 import Timer from '../../components/Timer/Timer.jsx';
 import Modal from '../../components/Modal/Modal.jsx';
-import Spinner from '../../components/Spinner/Spinner.jsx';
+import { ConversationSkeleton } from '../../components/Skeleton/Skeleton.jsx';
 import VoiceInputBar from './VoiceInputBar.jsx';
 import useSpeechSynthesis from '../../hooks/useSpeechSynthesis.js';
+import { preloadSessionResult } from '../../services/preload.js';
 import styles from './Conversation.module.css';
 
 const DIFFICULTY_LABELS = { easy: 'Easy', medium: 'Medium', hard: 'Hard', impossible: 'Impossible' };
@@ -137,6 +138,7 @@ function Conversation() {
     setEndError('');
     try {
       await sessionApi.end({ sessionId: id });
+      preloadSessionResult(id);
       navigate(`/session/${id}/evaluation`);
     } catch (err) {
       setEndError(err?.message || 'Unable to end the conversation. Please try again.');
@@ -162,7 +164,7 @@ function Conversation() {
     return badges;
   }, [businessInfo]);
 
-  if (loading) return <Spinner label="Loading your session..." />;
+  if (loading) return <ConversationSkeleton />;
 
   if (loadError) {
     const code = toErrorPageCode(loadError);

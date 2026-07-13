@@ -1,5 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { getSession, onAuthChange, signIn, signOut, signUp } from '../services/auth.js';
+import { resetHttpClientState } from '../services/httpClient.js';
+import { preloadAuthenticatedApp, resetAuthenticatedPreload } from '../services/preload.js';
 
 const AuthContext = createContext(null);
 
@@ -22,6 +24,9 @@ export function AuthProvider({ children }) {
     });
 
     const unsubscribe = onAuthChange((nextSession) => {
+      resetHttpClientState({ clearGetCache: true });
+      resetAuthenticatedPreload();
+      if (nextSession) preloadAuthenticatedApp();
       if (isMounted) setSession(nextSession);
     });
 
@@ -31,9 +36,17 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
+  useEffect(() => {
+    if (session) preloadAuthenticatedApp();
+  }, [session]);
+
   const handleSignIn = useCallback((credentials) => signIn(credentials), []);
   const handleSignUp = useCallback((payload) => signUp(payload), []);
-  const handleSignOut = useCallback(() => signOut(), []);
+  const handleSignOut = useCallback(async () => {
+    resetHttpClientState({ clearGetCache: true });
+    resetAuthenticatedPreload();
+    return signOut();
+  }, []);
 
   const value = useMemo(
     () => ({

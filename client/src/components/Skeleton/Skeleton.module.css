@@ -1,0 +1,196 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-space-6);
+  padding-block: var(--sc-space-5) var(--sc-space-7);
+}
+
+.narrow {
+  max-width: 560px;
+  margin-inline: auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-space-4);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sc-space-4);
+}
+
+.card,
+.sideCard,
+.chatCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-space-4);
+  padding: var(--sc-space-5);
+  background: var(--sc-surface);
+  border: 1px solid var(--sc-border);
+  border-radius: var(--sc-radius-lg);
+  box-shadow: var(--sc-shadow-sm);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-space-3);
+}
+
+.conversation {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-space-4);
+  min-height: calc(100vh - var(--sc-header-h) - var(--sc-space-5));
+  padding-block: var(--sc-space-4) var(--sc-space-5);
+}
+
+.chatCard {
+  flex: 1;
+  min-height: 420px;
+}
+
+.scoreLayout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sc-space-5);
+}
+
+.skillGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sc-space-4);
+}
+
+.centerCard {
+  align-items: center;
+  justify-content: center;
+}
+
+.line,
+.block {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--sc-radius);
+  background: var(--sc-surface-2);
+}
+
+.line {
+  width: min(var(--sc-skeleton-w), 100%);
+  height: 14px;
+}
+
+.line + .line {
+  margin-top: var(--sc-space-3);
+}
+
+.line::after,
+.block::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.68), transparent);
+  animation: shimmer 1.2s var(--sc-ease-out) infinite;
+}
+
+.button {
+  width: 132px;
+  height: 42px;
+}
+
+.fullButton {
+  width: 100%;
+  height: 42px;
+}
+
+.chart {
+  height: 220px;
+}
+
+.row {
+  height: 76px;
+}
+
+.field {
+  height: 52px;
+}
+
+.infoRow {
+  height: 34px;
+}
+
+.inputRow {
+  height: 44px;
+  margin-top: auto;
+}
+
+.chatBubbleLeft,
+.chatBubbleRight {
+  width: min(360px, 76%);
+  height: 72px;
+  border-radius: var(--sc-radius-lg);
+}
+
+.chatBubbleRight {
+  align-self: flex-end;
+}
+
+.dial {
+  width: 152px;
+  height: 152px;
+  border-radius: var(--sc-radius-full);
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (min-width: 640px) {
+  .stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .skillGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 800px) {
+  .conversation {
+    flex-direction: row;
+  }
+
+  .sideCard {
+    width: var(--sc-sidebar-w);
+    flex-shrink: 0;
+  }
+}
+
+@media (min-width: 960px) {
+  .scoreLayout {
+    grid-template-columns: 280px 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .line::after,
+  .block::after {
+    animation: none;
+  }
+}
