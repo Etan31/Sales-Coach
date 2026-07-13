@@ -6,28 +6,23 @@ import { isAuthErrorCode, toErrorPageCode } from '../../utils/apiError.js';
 import Button from '../../components/Button/Button.jsx';
 import Card from '../../components/Card/Card.jsx';
 import ScoreCard from '../../components/ScoreCard/ScoreCard.jsx';
-import Chart from '../../components/Chart/Chart.jsx';
+import ScoreDial from '../../components/ScoreDial/ScoreDial.jsx';
 import Accordion from '../../components/Accordion/Accordion.jsx';
 import Spinner from '../../components/Spinner/Spinner.jsx';
 import TranscriptModal from '../../components/TranscriptModal/TranscriptModal.jsx';
 import { formatTranscript, downloadTextFile } from '../../utils/transcript.js';
 import { saveTranscript } from '../../services/localTranscripts.js';
+import { getScoreBand, SKILLS, SKILL_MAX } from '../../utils/score.js';
 import styles from './Evaluation.module.css';
 
-const SKILLS = [
-  { key: 'rapport', label: 'Rapport' },
-  { key: 'businessDiscovery', label: 'Business Discovery' },
-  { key: 'confidence', label: 'Confidence' },
-  { key: 'handlingObjections', label: 'Handling Objections' },
-  { key: 'valueSelling', label: 'Value Selling' },
-  { key: 'closing', label: 'Closing' }
-];
+const OVERALL_MAX = 100;
 
-function getScoreBand(score) {
-  if (score >= 75) return 'good';
-  if (score >= 50) return 'fair';
-  return 'poor';
-}
+/** Says in words what the arc says in color, so the band never rests on hue alone. */
+const VERDICT = {
+  good: 'Strong attempt',
+  fair: 'Getting there',
+  poor: 'Needs work'
+};
 
 function StringList({ items }) {
   if (!items || items.length === 0) {
@@ -149,11 +144,6 @@ function Evaluation() {
     downloadTextFile(transcriptFilename, transcriptText);
   }
 
-  const skillChartData = useMemo(() => {
-    if (!evaluation) return [];
-    return SKILLS.map((skill) => ({ label: skill.label, value: evaluation[skill.key] }));
-  }, [evaluation]);
-
   const accordionSections = useMemo(() => {
     if (!evaluation) return [];
     return [
@@ -165,7 +155,13 @@ function Evaluation() {
     ];
   }, [evaluation]);
 
-  if (loading) return <Spinner label="Loading your evaluation..." />;
+  if (loading) {
+    return (
+      <div className={styles.loading}>
+        <Spinner label="Loading your evaluation..." />
+      </div>
+    );
+  }
 
   if (loadError) {
     const code = toErrorPageCode(loadError);
@@ -193,22 +189,36 @@ function Evaluation() {
     );
   }
 
-  const band = getScoreBand(evaluation.overallScore);
+  const band = getScoreBand(evaluation.overallScore, OVERALL_MAX);
 
   return (
     <div className={styles.page}>
-      <Card className={`${styles.hero} ${styles[`hero_${band}`]}`}>
-        <span className={styles.heroLabel}>Overall Score</span>
-        <span className={styles.heroScoreRow}>
-          <span className={styles.heroScore}>{evaluation.overallScore}</span>
-          <span className={styles.heroMax}>/ 100</span>
-        </span>
-      </Card>
+      <header className={styles.header}>
+        <h1 className={styles.title}>Session results</h1>
+        <p className={styles.subtitle}>How the conversation went, skill by skill.</p>
+      </header>
 
-      <div className={styles.scoreGrid}>
-        {SKILLS.map((skill) => (
-          <ScoreCard key={skill.key} label={skill.label} score={evaluation[skill.key]} />
-        ))}
+      <div className={styles.scoreRow}>
+        <Card className={styles.dialCard}>
+          <h2 className={styles.dialLabel}>Overall score</h2>
+          <ScoreDial score={evaluation.overallScore} max={OVERALL_MAX} />
+          <p className={`${styles.verdict} ${styles[band]}`}>{VERDICT[band]}</p>
+        </Card>
+
+        <Card className={styles.breakdownCard}>
+          <h2 className={styles.sectionTitle}>Skill breakdown</h2>
+          <div className={styles.skillGrid}>
+            {SKILLS.map((skill) => (
+              <ScoreCard
+                key={skill.key}
+                label={skill.label}
+                score={evaluation[skill.key]}
+                max={SKILL_MAX}
+                flush
+              />
+            ))}
+          </div>
+        </Card>
       </div>
 
       {evaluation.summary && (
@@ -218,13 +228,8 @@ function Evaluation() {
         </Card>
       )}
 
-      <Card className={styles.chartCard}>
-        <h2 className={styles.sectionTitle}>Skill Breakdown</h2>
-        <Chart type="bar" data={skillChartData} max={10} />
-      </Card>
-
       <Card>
-        <Accordion sections={accordionSections} />
+        <Accordion sections={accordionSections} defaultOpenId="strengths" />
       </Card>
 
       <Card className={styles.transcriptCard}>
