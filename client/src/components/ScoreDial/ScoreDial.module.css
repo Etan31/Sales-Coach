@@ -1,0 +1,63 @@
+.dial {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+.dial svg {
+  /* Start the sweep at 12 o'clock instead of 3 o'clock. */
+  transform: rotate(-90deg);
+}
+
+.track {
+  fill: none;
+  stroke: var(--sc-surface-3);
+}
+
+.arc {
+  fill: none;
+  stroke-linecap: round;
+  animation: sc-dial-sweep 800ms var(--sc-ease-out) both;
+}
+
+.good {
+  stroke: var(--sc-success);
+}
+
+.fair {
+  stroke: var(--sc-warning);
+}
+
+.poor {
+  stroke: var(--sc-danger);
+}
+
+.readout {
+  position: absolute;
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  margin: 0;
+}
+
+.score {
+  font-family: var(--sc-font-display);
+  font-size: var(--sc-fs-2xl);
+  font-weight: var(--sc-fw-bold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--sc-tracking-tight);
+  color: var(--sc-text);
+}
+
+.max {
+  font-size: var(--sc-fs-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--sc-text-faint);
+}
+
+@keyframes sc-dial-sweep {
+  from {
+    stroke-dashoffset: var(--sc-dial-empty);
+  }
+}
