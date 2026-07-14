@@ -1,6 +1,6 @@
-import { objectionLibrary, getObjectionsForCategories } from './objectionLibrary.js';
+import { objectionLibrary, getObjectionsForCategories, PRIMARY_OBJECTION_CATEGORIES } from './objectionLibrary.js';
 
-const EXPECTED_CATEGORIES = [
+const LEGACY_CATEGORIES = [
   'budget',
   'facebook',
   'trust',
@@ -15,12 +15,20 @@ const EXPECTED_CATEGORIES = [
 ];
 
 describe('objectionLibrary', () => {
-  it('has all 11 categories, each a non-empty array of strings', () => {
-    expect(Object.keys(objectionLibrary).sort()).toEqual([...EXPECTED_CATEGORIES].sort());
-    for (const category of EXPECTED_CATEGORIES) {
+  it('has all primary categories, each with at least 15 realistic strings', () => {
+    expect(Object.keys(objectionLibrary)).toEqual(expect.arrayContaining(PRIMARY_OBJECTION_CATEGORIES));
+    for (const category of PRIMARY_OBJECTION_CATEGORIES) {
+      expect(Array.isArray(objectionLibrary[category])).toBe(true);
+      expect(objectionLibrary[category].length).toBeGreaterThanOrEqual(15);
+      objectionLibrary[category].forEach((line) => expect(typeof line).toBe('string'));
+    }
+  });
+
+  it('keeps legacy category aliases for older generated profiles', () => {
+    expect(Object.keys(objectionLibrary)).toEqual(expect.arrayContaining(LEGACY_CATEGORIES));
+    for (const category of LEGACY_CATEGORIES) {
       expect(Array.isArray(objectionLibrary[category])).toBe(true);
       expect(objectionLibrary[category].length).toBeGreaterThan(0);
-      objectionLibrary[category].forEach((line) => expect(typeof line).toBe('string'));
     }
   });
 

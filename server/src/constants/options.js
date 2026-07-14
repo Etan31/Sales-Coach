@@ -9,6 +9,8 @@ export const businessTypes = [
   { value: 'gym', label: 'Gym' },
   { value: 'dental_clinic', label: 'Dental Clinic' },
   { value: 'laundry_shop', label: 'Laundry Shop' },
+  { value: 'pet_grooming', label: 'Pet Grooming' },
+  { value: 'flower_shop', label: 'Flower Shop' },
   { value: 'convenience_store', label: 'Convenience Store' },
   { value: 'hardware_store', label: 'Hardware Store' },
   { value: 'bakery', label: 'Bakery' }

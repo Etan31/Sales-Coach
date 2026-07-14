@@ -17,7 +17,7 @@ existing convention over inventing a new one.
 
 | Field | Values |
 |---|---|
-| businessType | `coffee_shop` Coffee Shop, `barbershop` Barbershop, `salon` Salon, `restaurant` Restaurant, `gym` Gym, `dental_clinic` Dental Clinic, `laundry_shop` Laundry Shop, `convenience_store` Convenience Store, `hardware_store` Hardware Store, `bakery` Bakery |
+| businessType | `coffee_shop` Coffee Shop, `barbershop` Barbershop, `salon` Salon, `restaurant` Restaurant, `gym` Gym, `dental_clinic` Dental Clinic, `laundry_shop` Laundry Shop, `pet_grooming` Pet Grooming, `flower_shop` Flower Shop, `convenience_store` Convenience Store, `hardware_store` Hardware Store, `bakery` Bakery |
 | difficulty | `easy`, `medium`, `hard`, `impossible` |
 | contactMethod | `walk_in` Walk-in, `cold_call` Cold Call, `messenger` Facebook Messenger, `email` Email |
 | language | `english`, `tagalog`, `taglish` |
@@ -61,11 +61,19 @@ Language controls only the AI's speech + the evaluation output language. App UI 
   "marketing": ["Facebook", "Word of Mouth"],
   "painPoints": ["Few repeat customers", "Walk-ins only", "Missed inquiries"],
   "allowedObjections": ["budget", "facebook", "trust", "maintenance"],
-  "emotion": "Busy"
+  "emotion": "Busy",
+  "industry": "Food and Beverage",
+  "ownerPersonality": { "patience": "Low", "salesResistance": "Medium" },
+  "receptionistAvailability": { "available": true, "role": "Cashier" },
+  "scriptGuidance": "Discovery First",
+  "currentBusinessProblems": ["Missed Messenger inquiries"],
+  "currentBookingSystem": "Usually no formal booking; reservations happen through Messenger.",
+  "preferredCommunication": "Viber"
 }
 ```
 
-`budget`, `painPoints`, `allowedObjections` are HIDDEN from the client (they are what a good
+`budget`, `painPoints`, `allowedObjections`, generated operational problems, and owner/staff
+personality details are HIDDEN from the client (they are what a good
 salesperson must discover). They live in the jsonb + are used server-side in the roleplay prompt only.
 
 ## REST API — base path `/api`
@@ -162,10 +170,12 @@ EvaluationObject:
   - `evaluateConversation({ profile, messages, language }) -> EvaluationObject (minus id/sessionId/createdAt)`
   Both honor `config.aiMock` (return canned data, no network). `messages` are `{ role, content }`.
 - `services/profileGenerator.js` `generateBusinessProfile(businessType, difficulty) -> business_profile jsonb`
-  (randomized within the seed archetype for that businessType; harder difficulty -> lower budget / more
+  (randomized from local business reality configuration; harder difficulty -> lower budget / more
   objections / more skeptical personality).
-- `services/objectionLibrary.js` exports the categorized EN/Tagalog objection bank keyed by category
-  (`budget, facebook, trust, competition, need, maintenance, time, previous_experience, authority, price, risk`).
+- `services/objectionLibrary.js` exports the categorized Taglish objection bank keyed by primary categories
+  such as `budget`, `facebook_is_enough`, `no_need`, `too_busy`, `not_tech_savvy`, `monthly_fees`,
+  `trust`, `roi`, `messenger_works_fine`, and `food_delivery_apps_are_enough`, with legacy aliases
+  for older generated profiles.
 
 ## Frontend service contracts (`client/src/services`)
 

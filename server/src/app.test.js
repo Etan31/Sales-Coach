@@ -20,7 +20,7 @@ describe('API integration', () => {
       expect(res.body[key][0]).toHaveProperty('value');
       expect(res.body[key][0]).toHaveProperty('label');
     }
-    expect(res.body.businessTypes).toHaveLength(10);
+    expect(res.body.businessTypes).toHaveLength(12);
   });
 
   it('GET /api/statistics without a bearer token -> 401 error envelope', async () => {

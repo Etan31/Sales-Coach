@@ -1,5 +1,5 @@
 -- seed/business_profiles.sql
--- Archetype templates for public.business_profiles -- one row per business_type (all 10 slugs
+-- Archetype templates for public.business_profiles -- one row per business_type (all 12 slugs
 -- from docs/contracts.md). services/profileGenerator.js reads these as a base and randomizes
 -- budget / pain_points / allowed_objections / personality tone per session (harder difficulty
 -- skews budget down and objections up). These rows are templates only, not per-session data.
@@ -58,6 +58,20 @@ values
     '["No customer tracking", "Manual pricing", "Missed pickup requests", "Low repeat visibility"]',
     '["Word of Mouth", "Facebook"]',
     '["budget", "need", "maintenance", "time"]'
+  ),
+  (
+    '10000000-0000-4000-8000-00000000000b', 'pet_grooming',
+    'Warm with pet owners but strict about schedule and no-shows', 'medium', 12000,
+    '["Messenger bookings", "Reschedules", "Incomplete pet details", "Manual appointment confirmation"]',
+    '["Facebook", "Instagram", "Google Maps", "Word of Mouth"]',
+    '["budget", "messenger_works_fine", "maintenance", "not_tech_savvy"]'
+  ),
+  (
+    '10000000-0000-4000-8000-00000000000c', 'flower_shop',
+    'Creative, practical, rushed during peak dates, cautious with expenses', 'medium', 10000,
+    '["Manual custom orders", "Delivery details scattered in chat", "Rush inquiries", "No organized catalog"]',
+    '["Facebook", "Instagram", "Viber", "Word of Mouth"]',
+    '["budget", "facebook_is_enough", "too_busy", "monthly_fees"]'
   ),
   (
     '10000000-0000-4000-8000-000000000008', 'convenience_store',

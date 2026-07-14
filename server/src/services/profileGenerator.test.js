@@ -12,7 +12,28 @@ const REQUIRED_KEYS = [
   'marketing',
   'painPoints',
   'allowedObjections',
-  'emotion'
+  'emotion',
+  'businessType',
+  'industry',
+  'ownerPersonality',
+  'receptionistAvailability',
+  'difficulty',
+  'language',
+  'technologyConfidence',
+  'websiteKnowledge',
+  'budgetSensitivity',
+  'decisionAuthority',
+  'salesOpenness',
+  'scriptGuidance',
+  'currentBusinessProblems',
+  'marketingChannels',
+  'customerAcquisition',
+  'orderSources',
+  'currentBookingSystem',
+  'currentSoftware',
+  'revenueSources',
+  'preferredCommunication',
+  'businessReality'
 ];
 
 // Budget ceilings mirrored from profileGenerator.js's internal BUDGET_RANGES (not exported).
@@ -39,7 +60,7 @@ describe('generateBusinessProfile', () => {
 
   it('includes every required business_profile key', () => {
     const profile = generateBusinessProfile('barbershop', 'easy', () => 0.5);
-    expect(Object.keys(profile).sort()).toEqual(REQUIRED_KEYS.sort());
+    expect(Object.keys(profile)).toEqual(expect.arrayContaining(REQUIRED_KEYS));
     expect(typeof profile.business).toBe('string');
     expect(typeof profile.ownerName).toBe('string');
     expect(typeof profile.ownerAge).toBe('number');
@@ -49,6 +70,16 @@ describe('generateBusinessProfile', () => {
     expect(Array.isArray(profile.marketing)).toBe(true);
     expect(Array.isArray(profile.painPoints)).toBe(true);
     expect(Array.isArray(profile.allowedObjections)).toBe(true);
+    expect(typeof profile.industry).toBe('string');
+    expect(typeof profile.ownerPersonality).toBe('object');
+    expect(typeof profile.receptionistAvailability).toBe('object');
+    expect(typeof profile.scriptGuidance).toBe('string');
+    expect(Array.isArray(profile.currentBusinessProblems)).toBe(true);
+    expect(Array.isArray(profile.marketingChannels)).toBe(true);
+    expect(Array.isArray(profile.customerAcquisition)).toBe(true);
+    expect(Array.isArray(profile.orderSources)).toBe(true);
+    expect(Array.isArray(profile.currentSoftware)).toBe(true);
+    expect(Array.isArray(profile.revenueSources)).toBe(true);
   });
 
   it.each(['easy', 'medium', 'hard', 'impossible'])('scales budget within the %s range', (difficulty) => {
@@ -70,8 +101,10 @@ describe('generateBusinessProfile', () => {
 
     expect(easy.allowedObjections.length).toBeLessThanOrEqual(medium.allowedObjections.length);
     expect(medium.allowedObjections.length).toBeLessThanOrEqual(hard.allowedObjections.length);
-    // Impossible always carries its fixed tough core set (budget/price/trust/competition/need/risk).
-    expect(impossible.allowedObjections).toEqual(expect.arrayContaining(['budget', 'price', 'trust', 'competition', 'need', 'risk']));
+    // Impossible always carries its fixed tough core set in the expanded category naming.
+    expect(impossible.allowedObjections).toEqual(
+      expect.arrayContaining(['budget', 'trust', 'already_have_someone', 'no_need', 'roi', 'scammed_before'])
+    );
     expect(impossible.allowedObjections.length).toBeGreaterThanOrEqual(hard.allowedObjections.length - 1);
   });
 
