@@ -12,7 +12,10 @@ export default [
       '**/coverage/**',
       '**/build/**',
       'client/e2e/**',
-      'client/playwright.config.js'
+      'client/playwright.config.js',
+      '.claude/**',
+      '.agents/**',
+      '.github/**'
     ]
   },
   js.configs.recommended,
