@@ -11,7 +11,11 @@ import Timer from '../../components/Timer/Timer.jsx';
 import Modal from '../../components/Modal/Modal.jsx';
 import { ConversationSkeleton } from '../../components/Skeleton/Skeleton.jsx';
 import VoiceInputBar from './VoiceInputBar.jsx';
+import PendingTurnBar from './PendingTurnBar.jsx';
+import TurnSettings from './TurnSettings.jsx';
 import useSpeechSynthesis from '../../hooks/useSpeechSynthesis.js';
+import usePendingTurn from '../../hooks/usePendingTurn.js';
+import useCallPreferences from '../../hooks/useCallPreferences.js';
 import { preloadSessionResult } from '../../services/preload.js';
 import styles from './Conversation.module.css';
 
@@ -31,7 +35,6 @@ function Conversation() {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
 
-  const [draft, setDraft] = useState('');
   const [awaitingReply, setAwaitingReply] = useState(false);
   const [sendError, setSendError] = useState('');
 
@@ -39,8 +42,9 @@ function Conversation() {
   const [ending, setEnding] = useState(false);
   const [endError, setEndError] = useState('');
 
-  const [muted, setMuted] = useState(false);
-  const { speak, cancel } = useSpeechSynthesis();
+  const [preferences, updatePreferences] = useCallPreferences();
+  const { autoReply, pauseAllowanceMs, muted } = preferences;
+  const { speak, cancel, isSpeaking } = useSpeechSynthesis();
 
   const messagesEndRef = useRef(null);
 
@@ -121,16 +125,20 @@ function Conversation() {
     [awaitingReply, messages.length, id, navigate, isColdCall, muted, session, speak]
   );
 
-  const handleSend = useCallback(
-    (event) => {
-      event.preventDefault();
-      const trimmed = draft.trim();
-      if (!trimmed || awaitingReply) return;
-      setDraft('');
-      sendMessage(trimmed);
-    },
-    [draft, awaitingReply, sendMessage]
-  );
+  const pendingTurn = usePendingTurn({
+    autoReply,
+    pauseAllowanceMs,
+    canCommit: !awaitingReply && !ending,
+    onCommit: sendMessage
+  });
+
+  const { noteActivity } = pendingTurn;
+
+  // Confirming the end of a session should not race an auto-send; the staged draft
+  // survives if the seller backs out.
+  useEffect(() => {
+    if (modalOpen) noteActivity();
+  }, [modalOpen, noteActivity]);
 
   const handleEndConfirm = useCallback(async () => {
     cancel();
@@ -147,12 +155,10 @@ function Conversation() {
   }, [id, navigate, cancel]);
 
   const handleToggleMute = useCallback(() => {
-    setMuted((prev) => {
-      const next = !prev;
-      if (next) cancel();
-      return next;
-    });
-  }, [cancel]);
+    const next = !muted;
+    if (next) cancel();
+    updatePreferences({ muted: next });
+  }, [cancel, muted, updatePreferences]);
 
   const businessInfo = session?.businessInfo;
 
@@ -233,36 +239,31 @@ function Conversation() {
           </p>
         )}
 
-        {isColdCall ? (
-          <div className={styles.voiceControls}>
-            <VoiceInputBar onSend={sendMessage} disabled={awaitingReply} language={session.language} />
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={handleToggleMute}
-              aria-pressed={muted}
-              aria-label={muted ? 'Unmute voice' : 'Mute voice'}
-              className={styles.muteToggle}
-            >
-              {muted ? 'Unmute voice' : 'Mute voice'}
-            </Button>
-          </div>
-        ) : (
-          <form className={styles.inputBar} onSubmit={handleSend}>
-            <input
-              type="text"
-              className={styles.input}
-              value={draft}
-              onChange={(event) => setDraft(event.target.value)}
-              placeholder="Type your message..."
+        <div className={styles.inputArea}>
+          {isColdCall ? (
+            <VoiceInputBar
+              pendingTurn={pendingTurn}
+              language={session.language}
+              autoReply={autoReply}
+              // Park the mic while the owner is replying, so the reply being read aloud
+              // is not transcribed back as the seller's next turn.
+              suspended={awaitingReply || isSpeaking}
               disabled={awaitingReply}
-              aria-label="Message"
             />
-            <Button type="submit" disabled={awaitingReply || !draft.trim()} loading={awaitingReply}>
-              Send
-            </Button>
-          </form>
-        )}
+          ) : (
+            <PendingTurnBar pendingTurn={pendingTurn} autoReply={autoReply} disabled={awaitingReply} />
+          )}
+
+          <TurnSettings
+            autoReply={autoReply}
+            pauseAllowanceMs={pauseAllowanceMs}
+            onChange={updatePreferences}
+            onActivity={noteActivity}
+            muted={muted}
+            onToggleMute={handleToggleMute}
+            showMute={isColdCall}
+          />
+        </div>
       </main>
 
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title="End this conversation?">

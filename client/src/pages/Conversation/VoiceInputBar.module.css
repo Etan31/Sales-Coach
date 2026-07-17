@@ -111,47 +111,6 @@
   text-align: center;
 }
 
-.typeToggle {
-  background: transparent;
-  border: none;
-  color: var(--sc-primary);
-  font-size: var(--sc-fs-sm);
-  font-weight: var(--sc-fw-medium);
-  cursor: pointer;
-  padding: var(--sc-space-1) var(--sc-space-2);
-}
-
-.typeToggle:hover {
-  text-decoration: underline;
-}
-
-.typeForm {
-  display: flex;
-  width: 100%;
-  gap: var(--sc-space-2);
-}
-
-.typeInput {
-  flex: 1;
-  padding: 10px var(--sc-space-3);
-  border: 1px solid var(--sc-border);
-  border-radius: var(--sc-radius);
-  background: var(--sc-surface);
-  color: var(--sc-text);
-  font-size: var(--sc-fs-md);
-  transition: border-color var(--sc-transition), box-shadow var(--sc-transition);
-}
-
-.typeInput:hover {
-  border-color: var(--sc-border-strong);
-}
-
-.typeInput:focus-visible {
-  outline: none;
-  border-color: var(--sc-primary);
-  box-shadow: var(--sc-ring);
-}
-
 @media (min-width: 800px) {
   .micButton,
   .pulse {
