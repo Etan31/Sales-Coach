@@ -53,6 +53,10 @@ export function useSpeechSynthesis() {
       utterance.onerror = () => setIsSpeaking(false);
 
       utteranceRef.current = utterance;
+      // Set before speaking rather than waiting for the async onstart: callers park the
+      // microphone on this flag, and the gap would leave it live exactly as the reply
+      // starts playing - long enough to transcribe the owner's own voice back.
+      setIsSpeaking(true);
       window.speechSynthesis.speak(utterance);
     },
     [isSupported]
